@@ -1,0 +1,52 @@
+{
+  "name": "Log1p Bank bounded fixed-configuration checkpoint comparison v1",
+  "backend": "JAX CPU float64",
+  "methods": [
+    "cv1",
+    "cv2"
+  ],
+  "batch": 16,
+  "h": 0.025,
+  "geometry": "full",
+  "replicas": 512,
+  "seeds": [
+    204700,
+    204701,
+    204702,
+    204703,
+    204704,
+    204705,
+    204706,
+    204707
+  ],
+  "initialization_seed": 204699,
+  "schedule_seed": 204698,
+  "checkpoints": [
+    128,
+    256,
+    384,
+    512
+  ],
+  "max_iterations": 512,
+  "sw2_threshold": 0.3,
+  "variance_nrmse_threshold": 0.5,
+  "bootstrap_seed": 204799,
+  "bootstrap_draws": 10000,
+  "initialization": "Every replica independently starts at its own target mode. Original counter RNG paired by seed,replica,iteration,purpose across methods.",
+  "metric": "Endpoint standardized slicedW2 and relative ergodic variance NRMSE; mean over8 seeds separately for each fixed reference, worse of two reference means. Unchanged definitions.",
+  "failure_rule": "Any failed replica in any seed through512 invalidates the method/config at every checkpoint. All failures retained; never score survivors.",
+  "time": "Local stored anchor attribution + actual per-run prepare/state setup + synchronized compiled sampling including RNG. Cold adds compile per shape. Functionals/scoring/I/O excluded equally, separately recorded. Cache/order effects mean cold is not fresh-process cold.",
+  "first_attainment": "Earliest tested checkpoint with both aggregate metrics passing; no interpolation and no global tuning claim. At128 reached means true first attainment is left-censored <=128; none through512 is Not Reached.",
+  "uncertainty": "Paired whole-seed bootstrap preserves methods,checkpoints,references. Pointwise percentile95% CIs for metrics/time and paired differences; no multiplicity correction. Recompute earliest crossing per draw and retain Not Reached mass. Speedup CI on jointly attained draws is conditional, explicitly report fraction; no finite ratio when point comparison unavailable.",
+  "scope": "Exploratory independent follow-up to observed feature sensitivity; thresholds fixed, no new reference or parameters. Four checkpoints only. Stop after these16 runs; no P3B.",
+  "budget_seconds": 900,
+  "input_hashes": {
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/target.npz": "9a4f12dc4ea20017af8e99df6859ca63a82e37b9413352d1770edb71442ff4fa",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/scoring.npz": "9481e6b9b62379d27b022426eda6bddbbfd32ed3ebc466ad960f4b7df39be360",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/metadata.json": "d736df2962e50335f083b1432dfcfe21329fccecf47ecc74ffa42198641666ce",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/reference_pair.json": "50dd315b25956130533dc0ff8c63a854d90678f31677a824f32b4bd368280bd9",
+    "p2_screening/kernels.py": "1d7038f95cc4936f30f366f30372f48d867d4d69efc9db46cc7387d2cce603b5",
+    "gpu_replication/batched_sampler.py": "64ea7103d380eeb5a8758d5c915dee261f1ddbd0ea96e31449ad514560131edb",
+    "p2_screening/run.py": "01d43fbb86881fab4b7dc0e3417a9a69c92981148577666d6b334027bf9b2506"
+  }
+}

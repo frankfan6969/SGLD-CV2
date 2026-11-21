@@ -1,0 +1,20 @@
+{
+  "purpose": "year_frozen_geometry_confirmation",
+  "calibration_source": "results/year_targeted_calibration_v2",
+  "problem_source": "results/stage456_validation/year_ridge",
+  "scoring_calibration": "results/year_resolution_diagnostic/accuracy_calibration.npz",
+  "method_seeds": [1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007],
+  "inspected_sampler_seeds": [100, 300, 7300, 910, 911],
+  "chains": 4,
+  "score_draws_per_chain": 128,
+  "reference_size": 1024,
+  "initial_posterior_scale": 2.0,
+  "arms": {
+    "identity_cv1": {"method": "cv1", "geometry": "identity", "step_size": 2.2486761328101326e-12, "batch_size": 32, "warmup": 1000, "draws": 4000},
+    "identity_cv2": {"method": "cv2", "geometry": "identity", "step_size": 2.2486761328101326e-12, "batch_size": 32, "warmup": 1000, "draws": 4000},
+    "full_cv1_h01": {"method": "cv1", "geometry": "full_hessian", "step_size": 0.1, "batch_size": 128, "warmup": 1000, "draws": 20000},
+    "full_cv2_h03": {"method": "cv2", "geometry": "full_hessian", "step_size": 0.3, "batch_size": 128, "warmup": 1000, "draws": 4000},
+    "full_cv2_h06": {"method": "cv2", "geometry": "full_hessian", "step_size": 0.6, "batch_size": 128, "warmup": 1000, "draws": 4000}
+  },
+  "selection_note": "Frozen before fresh seeds: CV1 h=.1 long chain had calibration Rhat near 1.01; CV2 h=.3 mixed with smaller covariance error; h=.6 probes discretization bias. Identity arms are budget-censored controls."
+}

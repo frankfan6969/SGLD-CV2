@@ -1,0 +1,41 @@
+{
+  "name": "Bank exploratory feature sensitivity v1",
+  "versions": [
+    "original",
+    "log1p_previous",
+    "winsor999_previous"
+  ],
+  "transform_column": "previous",
+  "winsor_quantile": 0.999,
+  "quantile_method": "linear",
+  "standardization": "Each transformed column uses its own full-data mean and population std; all other columns and labels identical",
+  "mode_solver": "Damped Newton up to50 iterations, full Hessian, backtracking, zero initialization, independent gradient norm <1e-7; scipy Newton-CG precision-loss warning on Original before transformed computation prompted this documented numerical adjustment",
+  "prior_precision": 1.0,
+  "targets": "Three distinct posteriors, same Gaussian prior form, not target-preserving reparameterizations",
+  "seed": 204200,
+  "directions": 32,
+  "radii_in_sqrt_d": [
+    1.0,
+    2.0,
+    4.0
+  ],
+  "location_construction": "16 independent normalized Gaussian whitened directions plus their negatives, shared across targets; theta=mode+radius*B*direction, B=symmetric inverse sqrt posterior Hessian",
+  "batch": 32,
+  "mc_draws": 512,
+  "mc_locations": [
+    0,
+    32,
+    64
+  ],
+  "stage_a_metrics": "Raw/preconditioned residual norm max,q99,q999; exact finite-population noise;29182 share; MC update-noise tail descriptive",
+  "stage_b_eligibility": "Per variant, at radius sqrt(d), median across directions of max CV2 preconditioned residual norm <= half original and median exact CV2 preconditioned noise <= original. Mechanism screen only, not a statistical test.",
+  "stage_b_scope": "Only eligible transformed targets plus newly rerun original control. Reference gates unchanged. Separate frozen bounded sampler protocol before stageB.",
+  "budget_seconds": 600,
+  "input_hashes": {
+    "results/p3a_bank_t4_heldout_v1/frozen_bank_assets/target.npz": "7a32e3e9c40fc3314e91ce4e45365e4a85f43e525f3caeaf273dbcdfd4ba7d73",
+    "results/p3a_bank_t4_heldout_v1/frozen_bank_assets/target_geometry.json": "4d186338bee3a6869dd1199396997d48993edc0168ec6ac5baf7d30fc6cbac6c",
+    "src/sgld_cv/models.py": "2244a33465328d90c434dd0916c5b610e9cf36d00e00ca2c157e4b71ab0811f5",
+    "src/sgld_cv/anchors.py": "39f3db29948ee3ab536d49220923bf964418246cb88d66601ac72e2e735583d4"
+  },
+  "note": "Exploratory protocol frozen before transformed diagnostic computation; no thresholds selected from transformed results"
+}

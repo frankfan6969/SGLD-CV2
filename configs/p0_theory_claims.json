@@ -1,0 +1,20 @@
+{
+  "audit": "P0_THEORY_AUDIT.md",
+  "claims": [
+    {"id": "unbiased_gradient", "status": "verified", "scope": "fixed anchor, uniform batches, exact prior"},
+    {"id": "quartic_variance", "status": "verified_conditional", "scope": "per-datum Hessian Lipschitz; finite-population correction without replacement"},
+    {"id": "quadratic_exactness", "status": "verified", "scope": "quadratic per-datum likelihood; matched metric and step"},
+    {"id": "fixed_P_reparameterization", "status": "verified", "scope": "constant SPD P; transformed global constants, not just anchor eigenvalues"},
+    {"id": "W2_recursion", "status": "requires_revision", "scope": "conditional structure valid with L2 local error and verified uniform oracle variance; original constants/assumptions not certified"},
+    {"id": "fourth_moment_drift", "status": "conditional", "scope": "component-level oracle moments, oracle-dependent small step and nonnegative contraction coefficient"},
+    {"id": "second_implies_fourth", "status": "invalid", "scope": "explicit fourth-moment assumptions required"},
+    {"id": "N_variance_rates", "status": "conditional", "scope": "raw-coordinate upper bounds only; fixed d, concentration, anchor and feature assumptions"},
+    {"id": "N_inverse_actual_work", "status": "requires_revision", "scope": "integer floors and all curvature/setup work; no actual O(N^-1) cost claim"},
+    {"id": "universal_CV2_speedup", "status": "unsupported", "scope": "must measure optimized accuracy-cost tradeoff"},
+    {"id": "adaptive_fixed_P_guarantee", "status": "unsupported", "scope": "Gamma-omitted Li baseline is empirical"}
+  ],
+  "P1_empirical_comparisons_allowed": true,
+  "theorem_based_superiority_allowed": false,
+  "publication_theory_certified": false,
+  "P5_revision_required": true
+}

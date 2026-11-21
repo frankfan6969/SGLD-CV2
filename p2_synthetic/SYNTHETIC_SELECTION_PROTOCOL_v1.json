@@ -1,0 +1,45 @@
+{
+  "stage": "P2 four-regime synthetic selection freeze v1",
+  "targets": [
+    "synthetic_correlated_signal1",
+    "synthetic_scaled_signal1",
+    "synthetic_correlated_signal3",
+    "synthetic_benign_signal1"
+  ],
+  "methods": [
+    "cv1",
+    "cv2",
+    "ula"
+  ],
+  "step_sizes": [
+    0.05,
+    0.1,
+    0.2
+  ],
+  "h_rule": "original full-H c/LP grid; actual LP verified within1e-7 of1 before each run",
+  "geometry": "full-H; identity/diagonal/Li remain complete screening controls, not optimized final controls",
+  "replicas": 128,
+  "selection_seeds": [
+    188000,
+    188001,
+    188002,
+    188003
+  ],
+  "checkpoints": [
+    128,
+    512,
+    2048
+  ],
+  "batch_size": 32,
+  "reference": "reuse exact target/ref/scoring/projection files and passed frozen gates for all four regimes; no reference recomputation",
+  "initialization": "all replicas independently from same mode; separate replica/purpose/iteration streams; paired streams across methods/configurations",
+  "failure": "any failed replica invalidates complete seed ensemble from first failure; any failed seed makes configuration ineligible at2048; no deletion/replacement",
+  "selection_rule": "within each target and method, zero failures and all4seeds required; minimize max ratio of each of four mean accuracy components (SW2 and variance NRMSE against both refs at2048) to own-method best eligible value; tie warm time, cold time, h. Rule operationalized now before new selection seeds. No grid expansion or automatic heldout.",
+  "cost": "anchor+actual setup+synchronized sampler; cold additionally attributed first compile; warm removes compile. Shared unscored initialization of all three methods at actual shapes before measured setup is separate research cost, preventing first-process allocation bias; scoring/functionals/reference/Drive excluded. Pilot historical timings preserved unchanged.",
+  "initialization_seed": 198999,
+  "schedule_seed": 198001,
+  "stage_seconds": 900,
+  "heldout": "not consumed; separate numerical freeze after selection. Reserved189000\u2013189007 unused within each synthetic target; Bank use does not make target-specific pseudo-random samples heldout data overlap, disclose common seed pairing.",
+  "scope": "selection has R128 vs pilotR64; absolute empirical SW2 not directly comparable; no significance or universal superiority claim from selection",
+  "runner_sha256": "178e29299083e94adb860239eca0ae4917e135bd5179f088376e030482c8b6e6"
+}

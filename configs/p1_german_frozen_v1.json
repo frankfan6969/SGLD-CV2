@@ -1,0 +1,1037 @@
+{
+  "schema_version": 1,
+  "purpose": "P1 Configuration Freeze \u2014 German Credit",
+  "stage": "configuration_frozen",
+  "pilot_execution_started": false,
+  "research_question": "At matched h,T, is CV1 materially less accurate than full-gradient ULA; can CV2 reduce that gap at reasonable total cost?",
+  "transition": {
+    "public": "theta_next=theta-h*P*g+sqrt(2*h)*chol(P)*z",
+    "legacy_step_size": "2*h",
+    "dtype": "float64",
+    "blas_threads": 1
+  },
+  "target": {
+    "dataset": "German Credit",
+    "N": 1000,
+    "d": 61,
+    "prior_precision": 1.0,
+    "intercept": false,
+    "archive": "data/raw/german.zip",
+    "assets_source": "results/p0_validation_v2/german",
+    "anchor_sha256": "d2968184f55ca16055b0f403543a4b5cdb1d10cfe7fe64b0b72d4ab7e1962770",
+    "H_sha256": "b953c67caaaab385876d02512198a01af82b95206437e02475c4666a5e7364b0",
+    "ridge_shift": 1e-10
+  },
+  "fixed_metrics": {
+    "identity": {
+      "L_P": 945.475012895384,
+      "coefficients": [
+        0.025,
+        0.05,
+        0.1,
+        0.2,
+        0.4,
+        0.8
+      ],
+      "h_grid": [
+        2.6441735274886878e-05,
+        5.2883470549773755e-05,
+        0.00010576694109954751,
+        0.00021153388219909502,
+        0.00042306776439819004,
+        0.0008461355287963801
+      ],
+      "legacy_step_size_grid": [
+        5.2883470549773755e-05,
+        0.00010576694109954751,
+        0.00021153388219909502,
+        0.00042306776439819004,
+        0.0008461355287963801,
+        0.0016922710575927602
+      ],
+      "P_sha256": "fabd8aac3c7195d5e4598f627ec11994533b8e740471a39473bc4864ae0e787c",
+      "scope": "anchor curvature scale only, not a global stochastic stability bound",
+      "P_definition": "I"
+    },
+    "diagonal": {
+      "L_P": 12.731460226528217,
+      "coefficients": [
+        0.025,
+        0.05,
+        0.1,
+        0.2,
+        0.4,
+        0.8
+      ],
+      "h_grid": [
+        0.0019636396418934053,
+        0.0039272792837868106,
+        0.007854558567573621,
+        0.015709117135147242,
+        0.031418234270294484,
+        0.06283646854058897
+      ],
+      "legacy_step_size_grid": [
+        0.0039272792837868106,
+        0.007854558567573621,
+        0.015709117135147242,
+        0.031418234270294484,
+        0.06283646854058897,
+        0.12567293708117794
+      ],
+      "P_sha256": "aed49afbfe739a9fe14cb5e71bc9cc25baa8e10a10459b2cb5887d51ec198034",
+      "scope": "anchor curvature scale only, not a global stochastic stability bound",
+      "P_definition": "inverse diag(H+delta I)"
+    },
+    "full": {
+      "L_P": 0.9999999999997848,
+      "coefficients": [
+        0.025,
+        0.05,
+        0.1,
+        0.2,
+        0.4,
+        0.8
+      ],
+      "h_grid": [
+        0.02500000000000538,
+        0.05000000000001076,
+        0.10000000000002152,
+        0.20000000000004303,
+        0.40000000000008606,
+        0.8000000000001721
+      ],
+      "legacy_step_size_grid": [
+        0.05000000000001076,
+        0.10000000000002152,
+        0.20000000000004303,
+        0.40000000000008606,
+        0.8000000000001721,
+        1.6000000000003443
+      ],
+      "P_sha256": "409f171a8bae7cea90ae02078ed1779d69def6786579569b77ac3e0aa001d031",
+      "scope": "anchor curvature scale only, not a global stochastic stability bound",
+      "P_definition": "inverse(H+delta I)"
+    }
+  },
+  "li2016": {
+    "raw_input": "unscaled batch mean likelihood gradient, excluding prior and CV correction",
+    "initial_v": "zeros independently per replica; planning second moment is NOT used as initial state",
+    "update": "v=alpha*v+(1-alpha)*raw_mean**2; P_t=diag(1/(epsilon+sqrt(v)))",
+    "Gamma": "omitted; empirical adaptive baseline; no fixed-P theorem guarantee",
+    "default": {
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    "bounded_alternative": {
+      "alpha": 0.9,
+      "epsilon": 1e-05,
+      "coefficients": [
+        0.016,
+        0.064
+      ]
+    },
+    "planning_formula": "E[raw_mean_B^2]=mean(g_i)^2+(N-b)/(b*(N-1))*mean((g_i-mean(g_i))^2)",
+    "planning_scope": "anchor expectation only; alpha-independent expectation scale, not actual v_t or stability guarantee",
+    "planning_by_batch": {
+      "4": {
+        "L_planning": 6759.379526098399,
+        "second_moment_sha256": "f023d29d6ce4a21b4a884a3ec93db03c9158e7dc25932445af1e900abfebbefb",
+        "h_grid_default": [
+          3.698564328792812e-08,
+          1.4794257315171247e-07,
+          5.917702926068499e-07,
+          2.3670811704273995e-06,
+          9.468324681709598e-06,
+          3.787329872683839e-05
+        ],
+        "coefficients": [
+          0.00025,
+          0.001,
+          0.004,
+          0.016,
+          0.064,
+          0.256
+        ]
+      },
+      "32": {
+        "L_planning": 19389.25140653525,
+        "second_moment_sha256": "a89020169812dfc8a23d266a38a69cbeb235946148d8fe37e0ef98b2f19764c0",
+        "h_grid_default": [
+          1.289374173134586e-08,
+          5.157496692538344e-08,
+          2.0629986770153377e-07,
+          8.251994708061351e-07,
+          3.3007978832245402e-06,
+          1.3203191532898161e-05
+        ],
+        "coefficients": [
+          0.00025,
+          0.001,
+          0.004,
+          0.016,
+          0.064,
+          0.256
+        ]
+      },
+      "128": {
+        "L_planning": 40840.32710257206,
+        "second_moment_sha256": "bfd3c6b6df80d22708b059bf1ed31f2f396b9601090ae719a669f13881414850",
+        "h_grid_default": [
+          6.121400530708663e-09,
+          2.448560212283465e-08,
+          9.79424084913386e-08,
+          3.917696339653544e-07,
+          1.5670785358614176e-06,
+          6.2683141434456706e-06
+        ],
+        "coefficients": [
+          0.00025,
+          0.001,
+          0.004,
+          0.016,
+          0.064,
+          0.256
+        ]
+      }
+    },
+    "no_full_alpha_epsilon_factorial": true
+  },
+  "seeds": {
+    "pilot": [
+      142100,
+      142101
+    ],
+    "pilot_amendment_reserved": [
+      142102,
+      142103
+    ],
+    "selection": [
+      142200,
+      142201,
+      142202,
+      142203
+    ],
+    "heldout": [
+      142300,
+      142301,
+      142302,
+      142303,
+      142304,
+      142305,
+      142306,
+      142307
+    ],
+    "reference_existing": [
+      7400,
+      7401
+    ],
+    "reference_resolution_only": [
+      143600
+    ],
+    "gradient_audit": [
+      143500,
+      143501
+    ],
+    "uncertainty": [
+      143900,
+      143901
+    ],
+    "timing_order": [
+      143700
+    ],
+    "single_chain_timing": [
+      143800,
+      143801,
+      143802,
+      143803,
+      143804
+    ]
+  },
+  "budgets": {
+    "pilot": {
+      "replicas": 64,
+      "iteration_checkpoints": [
+        128,
+        512,
+        2048
+      ],
+      "maximum_candidate_seed_runs": 90,
+      "max_candidate_sampler_seconds": 120,
+      "max_stage_elapsed_seconds": 3600,
+      "execution": "one trajectory to max T per candidate/seed; reuse prefixes, do not rerun every T"
+    },
+    "selection": {
+      "replicas": 128,
+      "iteration_checkpoints": [
+        128,
+        512,
+        2048,
+        8192
+      ],
+      "max_stage_elapsed_seconds": 14400,
+      "max_primary_configs_per_arm": 3,
+      "max_li_configs_per_arm": 2,
+      "max_identity_sgld_configs": 2,
+      "max_candidate_sampler_seconds": 600,
+      "maximum_candidate_seed_runs": 68
+    },
+    "heldout": {
+      "replicas": 512,
+      "iteration_checkpoints": [
+        128,
+        512,
+        2048,
+        8192
+      ],
+      "max_stage_elapsed_seconds": 43200,
+      "max_primary_configs_per_arm": 3,
+      "max_li_configs_per_arm": 2,
+      "max_identity_sgld_configs": 2,
+      "max_candidate_sampler_seconds": 1800,
+      "maximum_candidate_seed_runs": 136
+    },
+    "budget_exhaustion": "right-censor unreached checkpoints; retain last complete ensemble checkpoint; never replace failed/slow seeds",
+    "evaluation_time": "record separately; stage elapsed cap includes evaluation and serialization; selected-config cost excludes evaluation"
+  },
+  "batch_sizes": {
+    "main": 32,
+    "pilot_sampler_sweep": false,
+    "limited_gradient_MSE_check": [
+      4,
+      32,
+      128
+    ],
+    "audit_states": 32,
+    "fresh_batches_per_state": 128,
+    "ULA": "full N=1000; no stochastic batch parameter"
+  },
+  "primary_arms": [
+    "full_cv1",
+    "full_cv2",
+    "full_ula"
+  ],
+  "practical_arms": [
+    "identity_sgld",
+    "psgld",
+    "pcv1",
+    "pcv2"
+  ],
+  "deferred_ablations": [
+    "fixed-diagonal CV1/CV2: P2/P4",
+    "identity CV1/CV2: P2 or limited amended P1 checks",
+    "MALA: optional"
+  ],
+  "accuracy": {
+    "distribution": "replica endpoint standardized sliced-W2; 512 frozen projections",
+    "reference_size": 1024,
+    "init": "all replicas at the identical frozen anchor; independent batch/noise streams",
+    "functionals": "reuse P0 frozen definitions/scales; online averages over steps 1..T, burn_in=0",
+    "primary_functional": "mean coordinate-variance NRMSE (61 equally weighted coordinates)",
+    "secondary_functionals": [
+      "coordinate means",
+      "slow-direction mean/variance",
+      "eight prediction probabilities"
+    ],
+    "sw2_target_rule": "reference-only baseline median plus [.01,.03,.07,.15]; not a floor or subtraction",
+    "sw2_accuracy_targets": [
+      0.11337216968526233,
+      0.13337216968526233,
+      0.17337216968526234,
+      0.2533721696852623
+    ],
+    "variance_NRMSE_targets": [
+      0.05,
+      0.1,
+      0.2,
+      0.4
+    ],
+    "joint_success": "both endpoints meet the specified target pair; report marginal frontiers too"
+  },
+  "matched_noise_gap": {
+    "coefficients": [
+      0.1,
+      0.4
+    ],
+    "iterations": [
+      2048,
+      8192
+    ],
+    "maximum_confirmatory_cells": 4,
+    "contrasts": {
+      "noise": "CV1 minus ULA",
+      "recovery": "CV1 minus CV2",
+      "remaining": "CV2 minus ULA"
+    },
+    "material_margins": {
+      "sw2": 0.01,
+      "variance_NRMSE": 0.025
+    },
+    "substantial": "multiplicity-adjusted lower CI exceeds margin in >=1 primary endpoint, with no confirmed opposite material effect in the other",
+    "negligible": "adjusted CIs wholly within +/- margins for BOTH endpoints at each tested cell; scope limited to these cells",
+    "otherwise": "inconclusive, mixed, failed or budget-censored; absence of significance is not equivalence",
+    "interpretation": "differences in distance-to-posterior are contrasts, not additive noise/error decomposition",
+    "reference_sensitivity": "repeat accepted conclusions using independent reference pool; flip or unresolved reference error => inconclusive"
+  },
+  "screening_and_selection": {
+    "primary": "retain mandatory c=.1,.4 plus at most one extra pilot step per arm",
+    "extra_step_rule": "maximize improvement in attained target-specific minimum measured cost across pilot prefixes; ties: lower final variance-NRMSE, lower SW2, lower cost, smaller h",
+    "practical": "retain at most two configurations per arm by the same target-cost coverage rule; no extra hyperparameter factorial",
+    "selection_stage": "evaluate shortlisted configs on selection seeds; lock final per-target optimal-cost choices and all matched cells before heldout",
+    "ties": "equal metrics/cost: smaller h, then shorter T, then candidate ID lexicographically",
+    "frontier": "finite-grid nondominated configurations; no interpolation, extrapolation or heldout reoptimization",
+    "cost_advantage": "at least 10% lower selected-config total cost at matched accuracy, supported by paired uncertainty and reference sensitivity",
+    "no_candidate_feasible": "report unattained target, do not expand on selection or heldout outcomes"
+  },
+  "uncertainty": {
+    "level_pointwise": 0.95,
+    "bootstrap_repeats": 1999,
+    "matched_noise_gap_ci_level": 0.99375,
+    "multiplicity": "Bonferroni: four prespecified matched cells x two primary endpoints; additional contrasts exploratory pointwise",
+    "unit": "whole independent replica paths; paired method IDs; outer algorithm-seed clusters and inner paired replicas",
+    "reference": "conditional frozen-pool intervals; no iid resampling of correlated HMC draws; separate MCSE/sensitivity",
+    "pilot": "descriptive screening only; no formal superiority claims",
+    "heldout_algorithm_seeds": 8
+  },
+  "reference_quality": {
+    "requirements": {
+      "max_rhat_exclusive": 1.01,
+      "min_bulk_ess": 400,
+      "min_tail_ess": 400,
+      "max_divergences": 0,
+      "min_acceptance_exclusive": 0.5,
+      "independent_agreement_required": true,
+      "scoring_max_normalized_functional_mcse": 0.02,
+      "calibration_max_normalized_functional_mcse": 0.025,
+      "max_normalized_functional_disagreement": 0.1
+    },
+    "observed": {
+      "reliable": true,
+      "first_max_rhat": 1.0025148450667407,
+      "second_max_rhat": 1.0015250088915055,
+      "first_min_bulk_ess": 4526.052480882585,
+      "second_min_bulk_ess": 9684.037399422192,
+      "first_min_tail_ess": 3824.7583987820517,
+      "second_min_tail_ess": 7855.241428309659,
+      "scoring_max_normalized_functional_mcse": 0.015224322661201311,
+      "calibration_max_normalized_functional_mcse": 0.020652008494788557,
+      "max_normalized_reference_disagreement": 0.07562264077586116
+    },
+    "reference_only_baselines_R512_S1024": [
+      0.1064088498296125,
+      0.10337216968526233,
+      0.10241108507227659
+    ],
+    "limitations": "approximate correlated HMC; baseline is not a lower bound"
+  },
+  "failure": {
+    "transition": "nonfinite or whitened radius >100*sqrt(d); stop replica permanently, no clipping/refresh/replacement",
+    "checkpoint": "any failed replica invalidates whole corresponding ensemble; no survivor-only scores/CI",
+    "aggregate": "failed seed invalidates relevant contrast; preserve all failures and divergence counts",
+    "mixing": "separate overdispersed diagnostics; Rhat>=1.01 or min bulk/tail ESS<400 => mixing unverified, not proof endpoint invalid",
+    "reference": "failed quality/lock => stop before sampler execution",
+    "budget": "right-censored, not numerical failure"
+  },
+  "diagnostics": {
+    "selection_finalists_only": true,
+    "chains": 4,
+    "initialization": "shared 2x mode-Hessian Gaussian dispersion",
+    "warmup": 1000,
+    "draws": 4000,
+    "seed_derivation": "algorithm seed + 100000, distinct INITIALIZATION stream",
+    "adaptive_ESS": "exploratory only",
+    "diagnostic_cost": "separate from endpoint/estimator cost, counted in stage research elapsed"
+  },
+  "cost": {
+    "primary": "setup-inclusive sequential-ensemble wall time; setup once per collection",
+    "single_chain": "separately measure R=1 repetitions for selected estimator configs; never total_ensemble/R",
+    "single_chain_timing_repeats": 5,
+    "single_chain_research_cap_seconds": 1800,
+    "profile_components_in_frontier_runs": false,
+    "separate_profiles": "representative configurations only",
+    "itemize": [
+      "anchor",
+      "CV gradient cache",
+      "CV2 Hessian cache",
+      "metric Hessian/reuse",
+      "SPD validation",
+      "inverse solve",
+      "noise Cholesky",
+      "gradient work",
+      "dense correction",
+      "drift/noise",
+      "adaptive init/update"
+    ],
+    "tuning": "record grid-planning, pilot and selection search work per method; report search-inclusive and selected-config costs separately",
+    "shared_design_cost": "reference-only grid construction is a measured research/design cost, not free per-method preprocessing",
+    "no_gradient_equivalent_conversion": true
+  },
+  "amendments": {
+    "maximum_pilot_amendments": 1,
+    "trigger": "no eligible stable candidate or optimum hits grid boundary in BOTH pilot seeds",
+    "scope": "one factor-of-two adjacent step per affected arm; max two extra candidates per arm; use reserved amendment seeds only",
+    "additional_elapsed_cap_seconds": 1800,
+    "requirement": "write a new immutable protocol amendment before executing; no automatic expansion",
+    "selection_or_heldout": "no expansion or retuning; new study/version required"
+  },
+  "pilot_candidates": [
+    {
+      "id": "full_cv1_c0",
+      "arm": "full_cv1",
+      "method": "cv1",
+      "geometry": "full",
+      "coefficient": 0.025,
+      "h": 0.02500000000000538,
+      "legacy_step_size": 0.05000000000001076,
+      "batch_size": 32,
+      "full_gradient_rows_per_step": null,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_cv1_c1",
+      "arm": "full_cv1",
+      "method": "cv1",
+      "geometry": "full",
+      "coefficient": 0.05,
+      "h": 0.05000000000001076,
+      "legacy_step_size": 0.10000000000002152,
+      "batch_size": 32,
+      "full_gradient_rows_per_step": null,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_cv1_c2",
+      "arm": "full_cv1",
+      "method": "cv1",
+      "geometry": "full",
+      "coefficient": 0.1,
+      "h": 0.10000000000002152,
+      "legacy_step_size": 0.20000000000004303,
+      "batch_size": 32,
+      "full_gradient_rows_per_step": null,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_cv1_c3",
+      "arm": "full_cv1",
+      "method": "cv1",
+      "geometry": "full",
+      "coefficient": 0.2,
+      "h": 0.20000000000004303,
+      "legacy_step_size": 0.40000000000008606,
+      "batch_size": 32,
+      "full_gradient_rows_per_step": null,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_cv1_c4",
+      "arm": "full_cv1",
+      "method": "cv1",
+      "geometry": "full",
+      "coefficient": 0.4,
+      "h": 0.40000000000008606,
+      "legacy_step_size": 0.8000000000001721,
+      "batch_size": 32,
+      "full_gradient_rows_per_step": null,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_cv1_c5",
+      "arm": "full_cv1",
+      "method": "cv1",
+      "geometry": "full",
+      "coefficient": 0.8,
+      "h": 0.8000000000001721,
+      "legacy_step_size": 1.6000000000003443,
+      "batch_size": 32,
+      "full_gradient_rows_per_step": null,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_cv2_c0",
+      "arm": "full_cv2",
+      "method": "cv2",
+      "geometry": "full",
+      "coefficient": 0.025,
+      "h": 0.02500000000000538,
+      "legacy_step_size": 0.05000000000001076,
+      "batch_size": 32,
+      "full_gradient_rows_per_step": null,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_cv2_c1",
+      "arm": "full_cv2",
+      "method": "cv2",
+      "geometry": "full",
+      "coefficient": 0.05,
+      "h": 0.05000000000001076,
+      "legacy_step_size": 0.10000000000002152,
+      "batch_size": 32,
+      "full_gradient_rows_per_step": null,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_cv2_c2",
+      "arm": "full_cv2",
+      "method": "cv2",
+      "geometry": "full",
+      "coefficient": 0.1,
+      "h": 0.10000000000002152,
+      "legacy_step_size": 0.20000000000004303,
+      "batch_size": 32,
+      "full_gradient_rows_per_step": null,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_cv2_c3",
+      "arm": "full_cv2",
+      "method": "cv2",
+      "geometry": "full",
+      "coefficient": 0.2,
+      "h": 0.20000000000004303,
+      "legacy_step_size": 0.40000000000008606,
+      "batch_size": 32,
+      "full_gradient_rows_per_step": null,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_cv2_c4",
+      "arm": "full_cv2",
+      "method": "cv2",
+      "geometry": "full",
+      "coefficient": 0.4,
+      "h": 0.40000000000008606,
+      "legacy_step_size": 0.8000000000001721,
+      "batch_size": 32,
+      "full_gradient_rows_per_step": null,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_cv2_c5",
+      "arm": "full_cv2",
+      "method": "cv2",
+      "geometry": "full",
+      "coefficient": 0.8,
+      "h": 0.8000000000001721,
+      "legacy_step_size": 1.6000000000003443,
+      "batch_size": 32,
+      "full_gradient_rows_per_step": null,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_ula_c0",
+      "arm": "full_ula",
+      "method": "ula",
+      "geometry": "full",
+      "coefficient": 0.025,
+      "h": 0.02500000000000538,
+      "legacy_step_size": 0.05000000000001076,
+      "batch_size": null,
+      "full_gradient_rows_per_step": 1000,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_ula_c1",
+      "arm": "full_ula",
+      "method": "ula",
+      "geometry": "full",
+      "coefficient": 0.05,
+      "h": 0.05000000000001076,
+      "legacy_step_size": 0.10000000000002152,
+      "batch_size": null,
+      "full_gradient_rows_per_step": 1000,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_ula_c2",
+      "arm": "full_ula",
+      "method": "ula",
+      "geometry": "full",
+      "coefficient": 0.1,
+      "h": 0.10000000000002152,
+      "legacy_step_size": 0.20000000000004303,
+      "batch_size": null,
+      "full_gradient_rows_per_step": 1000,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_ula_c3",
+      "arm": "full_ula",
+      "method": "ula",
+      "geometry": "full",
+      "coefficient": 0.2,
+      "h": 0.20000000000004303,
+      "legacy_step_size": 0.40000000000008606,
+      "batch_size": null,
+      "full_gradient_rows_per_step": 1000,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_ula_c4",
+      "arm": "full_ula",
+      "method": "ula",
+      "geometry": "full",
+      "coefficient": 0.4,
+      "h": 0.40000000000008606,
+      "legacy_step_size": 0.8000000000001721,
+      "batch_size": null,
+      "full_gradient_rows_per_step": 1000,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "full_ula_c5",
+      "arm": "full_ula",
+      "method": "ula",
+      "geometry": "full",
+      "coefficient": 0.8,
+      "h": 0.8000000000001721,
+      "legacy_step_size": 1.6000000000003443,
+      "batch_size": null,
+      "full_gradient_rows_per_step": 1000,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "psgld_a0.99_c0.00025",
+      "arm": "psgld",
+      "method": "sgld",
+      "geometry": "li2016",
+      "coefficient": 0.00025,
+      "h": 1.289374173134586e-08,
+      "legacy_step_size": 2.578748346269172e-08,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "psgld_a0.99_c0.001",
+      "arm": "psgld",
+      "method": "sgld",
+      "geometry": "li2016",
+      "coefficient": 0.001,
+      "h": 5.157496692538344e-08,
+      "legacy_step_size": 1.0314993385076688e-07,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "psgld_a0.99_c0.004",
+      "arm": "psgld",
+      "method": "sgld",
+      "geometry": "li2016",
+      "coefficient": 0.004,
+      "h": 2.0629986770153377e-07,
+      "legacy_step_size": 4.1259973540306753e-07,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "psgld_a0.99_c0.016",
+      "arm": "psgld",
+      "method": "sgld",
+      "geometry": "li2016",
+      "coefficient": 0.016,
+      "h": 8.251994708061351e-07,
+      "legacy_step_size": 1.6503989416122701e-06,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "psgld_a0.99_c0.064",
+      "arm": "psgld",
+      "method": "sgld",
+      "geometry": "li2016",
+      "coefficient": 0.064,
+      "h": 3.3007978832245402e-06,
+      "legacy_step_size": 6.6015957664490805e-06,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "psgld_a0.99_c0.256",
+      "arm": "psgld",
+      "method": "sgld",
+      "geometry": "li2016",
+      "coefficient": 0.256,
+      "h": 1.3203191532898161e-05,
+      "legacy_step_size": 2.6406383065796322e-05,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "psgld_a0.9_c0.016",
+      "arm": "psgld",
+      "method": "sgld",
+      "geometry": "li2016",
+      "coefficient": 0.016,
+      "h": 8.251994708061351e-07,
+      "legacy_step_size": 1.6503989416122701e-06,
+      "batch_size": 32,
+      "alpha": 0.9,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "psgld_a0.9_c0.064",
+      "arm": "psgld",
+      "method": "sgld",
+      "geometry": "li2016",
+      "coefficient": 0.064,
+      "h": 3.3007978832245402e-06,
+      "legacy_step_size": 6.6015957664490805e-06,
+      "batch_size": 32,
+      "alpha": 0.9,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv1_a0.99_c0.00025",
+      "arm": "pcv1",
+      "method": "cv1",
+      "geometry": "li2016",
+      "coefficient": 0.00025,
+      "h": 1.289374173134586e-08,
+      "legacy_step_size": 2.578748346269172e-08,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv1_a0.99_c0.001",
+      "arm": "pcv1",
+      "method": "cv1",
+      "geometry": "li2016",
+      "coefficient": 0.001,
+      "h": 5.157496692538344e-08,
+      "legacy_step_size": 1.0314993385076688e-07,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv1_a0.99_c0.004",
+      "arm": "pcv1",
+      "method": "cv1",
+      "geometry": "li2016",
+      "coefficient": 0.004,
+      "h": 2.0629986770153377e-07,
+      "legacy_step_size": 4.1259973540306753e-07,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv1_a0.99_c0.016",
+      "arm": "pcv1",
+      "method": "cv1",
+      "geometry": "li2016",
+      "coefficient": 0.016,
+      "h": 8.251994708061351e-07,
+      "legacy_step_size": 1.6503989416122701e-06,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv1_a0.99_c0.064",
+      "arm": "pcv1",
+      "method": "cv1",
+      "geometry": "li2016",
+      "coefficient": 0.064,
+      "h": 3.3007978832245402e-06,
+      "legacy_step_size": 6.6015957664490805e-06,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv1_a0.99_c0.256",
+      "arm": "pcv1",
+      "method": "cv1",
+      "geometry": "li2016",
+      "coefficient": 0.256,
+      "h": 1.3203191532898161e-05,
+      "legacy_step_size": 2.6406383065796322e-05,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv1_a0.9_c0.016",
+      "arm": "pcv1",
+      "method": "cv1",
+      "geometry": "li2016",
+      "coefficient": 0.016,
+      "h": 8.251994708061351e-07,
+      "legacy_step_size": 1.6503989416122701e-06,
+      "batch_size": 32,
+      "alpha": 0.9,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv1_a0.9_c0.064",
+      "arm": "pcv1",
+      "method": "cv1",
+      "geometry": "li2016",
+      "coefficient": 0.064,
+      "h": 3.3007978832245402e-06,
+      "legacy_step_size": 6.6015957664490805e-06,
+      "batch_size": 32,
+      "alpha": 0.9,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv2_a0.99_c0.00025",
+      "arm": "pcv2",
+      "method": "cv2",
+      "geometry": "li2016",
+      "coefficient": 0.00025,
+      "h": 1.289374173134586e-08,
+      "legacy_step_size": 2.578748346269172e-08,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv2_a0.99_c0.001",
+      "arm": "pcv2",
+      "method": "cv2",
+      "geometry": "li2016",
+      "coefficient": 0.001,
+      "h": 5.157496692538344e-08,
+      "legacy_step_size": 1.0314993385076688e-07,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv2_a0.99_c0.004",
+      "arm": "pcv2",
+      "method": "cv2",
+      "geometry": "li2016",
+      "coefficient": 0.004,
+      "h": 2.0629986770153377e-07,
+      "legacy_step_size": 4.1259973540306753e-07,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv2_a0.99_c0.016",
+      "arm": "pcv2",
+      "method": "cv2",
+      "geometry": "li2016",
+      "coefficient": 0.016,
+      "h": 8.251994708061351e-07,
+      "legacy_step_size": 1.6503989416122701e-06,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv2_a0.99_c0.064",
+      "arm": "pcv2",
+      "method": "cv2",
+      "geometry": "li2016",
+      "coefficient": 0.064,
+      "h": 3.3007978832245402e-06,
+      "legacy_step_size": 6.6015957664490805e-06,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv2_a0.99_c0.256",
+      "arm": "pcv2",
+      "method": "cv2",
+      "geometry": "li2016",
+      "coefficient": 0.256,
+      "h": 1.3203191532898161e-05,
+      "legacy_step_size": 2.6406383065796322e-05,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv2_a0.9_c0.016",
+      "arm": "pcv2",
+      "method": "cv2",
+      "geometry": "li2016",
+      "coefficient": 0.016,
+      "h": 8.251994708061351e-07,
+      "legacy_step_size": 1.6503989416122701e-06,
+      "batch_size": 32,
+      "alpha": 0.9,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv2_a0.9_c0.064",
+      "arm": "pcv2",
+      "method": "cv2",
+      "geometry": "li2016",
+      "coefficient": 0.064,
+      "h": 3.3007978832245402e-06,
+      "legacy_step_size": 6.6015957664490805e-06,
+      "batch_size": 32,
+      "alpha": 0.9,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "identity_sgld_c0",
+      "arm": "identity_sgld",
+      "method": "sgld",
+      "geometry": "identity",
+      "coefficient": 0.05,
+      "h": 5.2883470549773755e-05,
+      "legacy_step_size": 0.00010576694109954751,
+      "batch_size": 32,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "identity_sgld_c1",
+      "arm": "identity_sgld",
+      "method": "sgld",
+      "geometry": "identity",
+      "coefficient": 0.2,
+      "h": 0.00021153388219909502,
+      "legacy_step_size": 0.00042306776439819004,
+      "batch_size": 32,
+      "alpha": null,
+      "epsilon": null
+    },
+    {
+      "id": "identity_sgld_c2",
+      "arm": "identity_sgld",
+      "method": "sgld",
+      "geometry": "identity",
+      "coefficient": 0.8,
+      "h": 0.0008461355287963801,
+      "legacy_step_size": 0.0016922710575927602,
+      "batch_size": 32,
+      "alpha": null,
+      "epsilon": null
+    }
+  ]
+}

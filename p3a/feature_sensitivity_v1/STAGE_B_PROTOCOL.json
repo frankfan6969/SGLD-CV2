@@ -1,0 +1,91 @@
+{
+  "stage": "Exploratory feature sensitivity stageB",
+  "versions": [
+    "original",
+    "log1p_previous",
+    "winsor999_previous"
+  ],
+  "backend": "JAX CPU float64",
+  "prior_precision": 1.0,
+  "reference": {
+    "original": "Reuse frozen original scoring clouds and passed pair gate; original target is unchanged",
+    "transformed": "Full-data MH HMC in new anchor whitening,8 leapfrog steps; warmup adaptation only",
+    "pools": 2,
+    "chains_per_pool": 4,
+    "warmup": 1024,
+    "retained_per_chain": 8192,
+    "seeds": [
+      204300,
+      204301
+    ],
+    "per_pool_seconds": 1800,
+    "gates": {
+      "max_rhat_exclusive": 1.01,
+      "min_bulk_ess": 400,
+      "min_tail_ess": 400,
+      "min_acceptance_exclusive": 0.5,
+      "divergences": 0,
+      "max_mean_mcse_z_exclusive": 4,
+      "covariance_relative_difference_exclusive": 0.2
+    },
+    "scoring_draws_per_pool": 256,
+    "scoring_selection_seed": 204310,
+    "projections": 128
+  },
+  "pilot": {
+    "methods": [
+      "cv1",
+      "cv2"
+    ],
+    "batch_sizes": [
+      16,
+      64
+    ],
+    "h_grid": [
+      0.0015625,
+      0.00625,
+      0.025
+    ],
+    "seeds": [
+      204400,
+      204401
+    ],
+    "replicas": 64,
+    "max_iterations": 8192,
+    "checkpoints": [
+      512,
+      2048,
+      8192
+    ]
+  },
+  "validation": {
+    "seeds": [
+      204500,
+      204501,
+      204502,
+      204503
+    ],
+    "replicas": 128,
+    "max_iterations": 8192,
+    "checkpoints": [
+      512,
+      2048,
+      8192
+    ]
+  },
+  "selection": "One fixed(n,h) per method per version: among full-horizon zero-failure pilot configurations, minimize mean setup-inclusive warm time to joint SW2<=.3 and variance_NRMSE<=.5 across two seeds and both refs; tie n,h,K lexical. If none, select smallest max(SW2/.3,NRMSE/.5) at8192, label fallback, no pilot attainment claimed. Freeze before validation.",
+  "failure_rule": "Any failed replica in any pilot/validation seed invalidates that complete configuration at all checkpoints; never remove failed replicas to score survivors. Failure threshold unchanged100sqrt(d).",
+  "cost": "Local anchor+prepare/state setup+synchronized sampling; cold adds measured shape compilation, cache/order effects acknowledged. Functions/scoring/storage/reference construction excluded from sampler ranking, separately recorded.",
+  "metrics": "Existing endpoint replica standardizedSW2 and ergodic relative-variance NRMSE, worse of reference-specific seed means. Four validation seeds are small diagnostic evidence, not replacement for original P3A.",
+  "stage_seconds": 7200,
+  "scope": "Bounded common grid and independent validation; no further tuning or gate lowering. Reference failure stops that version. No pooled ranking across distinct targets.",
+  "input_hashes": {
+    "p3a/feature_sensitivity_v1/PROTOCOL.json": "6263dc1cd09b87e86c4d110a30724bc36e9b8d3062a06e7b6e31161340e779fc",
+    "exports/p3a_feature_sensitivity_v1/stage_a_summary.json": "e388123b0f61a741a608f827b8d5665d1beb9792441f814e205b545422f95546",
+    "gpu_replication/batched_sampler.py": "64ea7103d380eeb5a8758d5c915dee261f1ddbd0ea96e31449ad514560131edb",
+    "p2_screening/kernels.py": "1d7038f95cc4936f30f366f30372f48d867d4d69efc9db46cc7387d2cce603b5",
+    "exports/p3a_feature_sensitivity_v1/original/target.npz": "e32cd75ed38a67d62783a621142a4c60ffd7c9c97a64ad6d912a86dd8aee5fa8",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/target.npz": "9a4f12dc4ea20017af8e99df6859ca63a82e37b9413352d1770edb71442ff4fa",
+    "exports/p3a_feature_sensitivity_v1/winsor999_previous/target.npz": "f9410887cd7e95e35b85432437608a79affc823ccf7591ec4ad0294c32c0c709"
+  }
+}

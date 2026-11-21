@@ -1,0 +1,17 @@
+{
+  "label": "Gaussian validation smoke run, not publication evidence",
+  "dimensions": [2],
+  "kappas": [10],
+  "N": 256,
+  "batch_size": 16,
+  "step_fraction": 0.2,
+  "steps": 400,
+  "replicas": 128,
+  "reference_size": 128,
+  "baseline_repeats": 3,
+  "checkpoint_count": 16,
+  "seeds": [300, 301, 302],
+  "dataset_seed": 221,
+  "methods": ["sgld", "cv1", "cv2", "ula"]
+}
+

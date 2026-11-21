@@ -1,0 +1,65 @@
+\documentclass[ba]{imsart}
+\RequirePackage{amsthm,amsmath,amsfonts,amssymb}
+\RequirePackage[authoryear]{natbib}
+\RequirePackage[hypertexnames=false,colorlinks,citecolor=blue,urlcolor=blue]{hyperref}
+\RequirePackage{graphicx,booktabs,longtable,multirow,bm,mathtools,microtype,placeins,array}
+\RequirePackage{cleveref}
+\pubyear{2026}
+\startlocaldefs
+\theoremstyle{plain}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{remark}{Remark}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Ek}{\mathbb{E}_k}
+\newcommand{\Ezeta}{\mathbb{E}_{\zeta}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\inner}[2]{\langle #1,\, #2 \rangle}
+\newcommand{\calO}{\mathcal{O}}
+\makeatletter
+\newcommand{\legacytheoremlabel}[2]{\begingroup\def\@currentlabel{#1}\label{#2}\endgroup}
+\makeatother
+\endlocaldefs
+\begin{document}
+\begin{frontmatter}
+\title{Second-Order Control Variates for Stochastic Gradient Langevin Dynamics}
+\runtitle{Second-Order Control Variates for SGLD}
+\begin{aug}
+\author[A]{\fnms{Michelle}~\snm{Le}},
+\author[B]{\fnms{Frank}~\snm{Fan}},
+\author[A]{\fnms{Jay}~\snm{Chooi}}
+\and
+\author[A]{\fnms{Alexander}~\snm{Young}}
+\address[A]{Harvard University}
+\address[B]{Massachusetts Institute of Technology}
+\runauthor{M. Le, F. Fan, J. Chooi and A. Young}
+\end{aug}
+\begin{abstract}
+Second-order control variates reduce the minibatch noise in stochastic-gradient Langevin sampling by subtracting an anchor-based linear approximation to each observation's gradient. We study when this reduction improves posterior accuracy and measured time-to-accuracy under fixed full-Hessian preconditioning. The theoretical analysis develops anchor-distance-dependent gradient-noise and Wasserstein bounds. Our experiments distinguish gradient precision, posterior approximation and setup-inclusive computational cost. On synthetic logistic targets, second-order control variates improve variance estimation without uniformly improving transport discrepancy or time-to-accuracy. On the original Bank Marketing target, rare, high-leverage Taylor remainders trigger numerical failures; controlled single-step interventions identify their mechanism. After a declared feature transformation and symmetric bounded tuning, independently validated configurations yield substantial CPU time-to-accuracy gains. In a nested synthetic dataset-size study, raw gradient-noise scaling agrees qualitatively with the predicted orders, but setup-inclusive speedup declines overall as sample size increases. A cost decomposition explains the decline through shared setup costs and first-order retuning. Gaussian checks verify numerical gradient and trajectory equivalence with full-gradient Langevin sampling. These findings identify conditional benefits and practical limitations rather than universal superiority.
+\end{abstract}
+\begin{keyword}
+\kwd{stochastic-gradient Langevin dynamics}
+\kwd{control variates}
+\kwd{posterior sampling}
+\kwd{preconditioning}
+\kwd{computational efficiency}
+\end{keyword}
+\end{frontmatter}
+\input{sections/introduction}
+\input{sections/method}
+\input{sections/theory}
+\input{sections/experiments}
+\section{Discussion}\label{sec:discussion}
+The experiments distinguish a more accurate stochastic gradient from a more efficient sampler. Under fixed full-Hessian geometry, second-order correction can improve posterior variance estimates and the validated accuracy--cost frontier, but rare observation-level remainders can limit stable step sizes. Conversely, even favorable gradient-noise scaling need not produce increasing time savings: shared preprocessing and the competing method's tuning change the total cost. These conclusions concern the declared targets, finite search grids, accuracy metrics and implementations.
+
+The transformed Bank result is a positive practical example, not a replacement for the negative original-target result. Transformation changes the posterior, and its effect cannot be separated from the subsequent tuning by comparing final speedups alone. Further generalization would require additional data-generating realizations and feature distributions. These observations distinguish gradient-oracle variance reduction from improvements in measured posterior accuracy and wall-clock cost.
+\appendix
+\input{sections/experimental_appendix}
+\input{sections/extended_appendix}
+\bibliographystyle{ba2}
+\bibliography{references}
+\end{document}

@@ -1,0 +1,22 @@
+\begin{table}[tb]
+\centering\small
+\caption{Complete set of configurations eligible for descriptive ESS throughput: all seeds pass the chain gates. Studies remain separate. $E$ is the within-seed minimum coordinate bulk ESS; metric columns are medians of per-seed values or ratios.}\label{tab:ess_eligible}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrr}
+\toprule
+Setting & Pass & $E$ & $E/(CT)$ & $E/[C(T+B)]$ & $E$/s & $E$/grad. \\
+\midrule
+\multicolumn{7}{l}{\textit{German selection diagnostics: four seeds}} \\
+CV1, $h=.4$ & 4/4 & 3262.1 & 0.2039 & 0.1631 & 4596.9 & 0.004943 \\
+CV2, $h=.2$ & 4/4 & 1415.8 & 0.0885 & 0.0708 & 1782.4 & 0.002145 \\
+CV2, $h=.4$ & 4/4 & 3303.6 & 0.2065 & 0.1652 & 4172.5 & 0.005005 \\
+ULA, $h=.2$ & 4/4 & 1443.8 & 0.0902 & 0.0722 & 1542.4 & 0.000072 \\
+ULA, $h=.4$ & 4/4 & 3304.9 & 0.2066 & 0.1652 & 3515.7 & 0.000165 \\
+\multicolumn{7}{l}{\textit{Year historical geometry: eight seeds}} \\
+CV1, $s=.1$ & 8/8 & 1677.4 & 0.0210 & 0.0200 & 240.5 & 0.000150 \\
+CV2, $s=.3$ & 8/8 & 1017.4 & 0.0636 & 0.0509 & 479.9 & 0.000336 \\
+CV2, $s=.6$ & 8/8 & 2374.2 & 0.1484 & 0.1187 & 1122.3 & 0.000785 \\
+\bottomrule
+\end{tabular}
+\par\smallskip{\footnotesize $C=4$ throughout. German has $B=1000,T=4000$. Year has $B=1000$, $T=20000$ for CV1 and $4000$ for CV2, with historical $s=2h$. Full-H is fixed in all displayed settings. Year ESS is source-verified; German ESS was recomputed from saved unthinned chains. Different steps, budgets and historical timings preclude a common optimized ranking.}
+\end{table}

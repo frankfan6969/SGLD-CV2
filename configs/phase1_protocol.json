@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "purpose": "phase1_correctness_and_protocol_freeze",
+  "dtype": "float64",
+  "blas_threads": 1,
+  "transition": "theta_next = theta - h_code * P * g / 2 + sqrt(h_code) * chol(P) * z",
+  "theory_step_conversion": "h_theory = h_code / 2",
+  "initialization": "all independent replicas start at the same frozen mode estimate",
+  "sampling_with_replacement": false,
+  "seeds": {
+    "validation": [141000, 141001],
+    "pilot": [141100, 141101, 141102, 141103],
+    "selection": [141200, 141201, 141202, 141203],
+    "heldout": [141300, 141301, 141302, 141303, 141304, 141305, 141306, 141307],
+    "new_reference": [141400, 141401],
+    "audit": [141500, 141501],
+    "projections": [141600],
+    "prediction_rows": [141700],
+    "dataset": [141800]
+  },
+  "arms": {
+    "identity_sgld": {"method": "sgld", "metric": "identity"},
+    "identity_cv1": {"method": "cv1", "metric": "identity"},
+    "identity_cv2": {"method": "cv2", "metric": "identity"},
+    "identity_ula": {"method": "ula", "metric": "identity"},
+    "full_sgld": {"method": "sgld", "metric": "full_hessian"},
+    "full_cv1": {"method": "cv1", "metric": "full_hessian"},
+    "full_cv2": {"method": "cv2", "metric": "full_hessian"},
+    "full_ula": {"method": "ula", "metric": "full_hessian"},
+    "psgld": {"method": "sgld", "metric": "rmsprop"},
+    "pcv1": {"method": "cv1", "metric": "rmsprop"},
+    "pcv2": {"method": "cv2", "metric": "rmsprop"}
+  },
+  "adaptive_baseline": {
+    "source": "https://ojs.aaai.org/index.php/AAAI/article/view/10200",
+    "variant": "Li-style practical Gamma-omitted RMSprop; constant step in each run",
+    "raw_gradient": "unscaled minibatch mean likelihood gradient, excluding prior and CV correction",
+    "alpha": 0.99,
+    "epsilon": 0.00001,
+    "initial_v": "zeros independently for each replica",
+    "ess_policy": "exploratory only; fixed-metric theory does not cover this arm"
+  },
+  "accuracy": {
+    "primary_distribution_metric": "standardized_sliced_w2",
+    "whitening": "fixed mode-Hessian square root, separate from sampler metric",
+    "projections": 512,
+    "reference_size": 1024,
+    "replica_rule": "one endpoint per independent replica at each checkpoint",
+    "low_dimensional_auxiliary": "POT empirical W2 for d <= 3",
+    "reference_baselines": 3,
+    "subtract_reference_baseline": false
+  },
+  "functionals": {
+    "coordinates": "all fixed mode-Hessian-whitened coordinate means and variances",
+    "slow_direction": "mean and variance along minimum-eigenvalue direction of mode Hessian",
+    "predictions": "8 frozen uniformly sampled design rows for logistic targets; no prediction-performance claim",
+    "burn_in": 0,
+    "variance_estimator": "mean(q^2) - mean(q)^2; no iid Bessel correction",
+    "normalization": "calibration reference SD of q for means, SD of (q-Eq)^2 for variances, SD of probability for predictions; floor 1e-8",
+    "aggregation": "report each functional plus family mean and family maximum normalized RMSE",
+    "reference_uncertainty": "independent-reference functional disagreement; HMC MCSE for each functional"
+  },
+  "reference": {
+    "gaussian": "exact iid; analytic functional expectations; calibration and scoring streams separate",
+    "synthetic_logistic": {"chains": 4, "warmup": 500, "first_draws": 3000, "second_draws": 5000, "step_size": 0.3, "leapfrog_steps": 12},
+    "german": {"archive": "data/raw/german.zip", "folder": "results/german_confirmation_reference", "seeds": [7400, 7401]},
+    "hmc_gate": {"max_rhat_exclusive": 1.01, "min_bulk_ess": 400, "min_tail_ess": 400, "max_divergences": 0, "min_acceptance_exclusive": 0.5},
+    "limitations": "HMC reference is approximate and correlated; diagnostics and independent agreement are required, not proof of exactness"
+  },
+  "failure": {
+    "standardized_radius_multiplier": 100,
+    "rule": "nonfinite transition or radius above 100*sqrt(d) fails replica permanently; no clipping, replacement, filtering, or automatic retuning",
+    "checkpoint": "any failed replica invalidates entire endpoint ensemble and RMSE from that point onward",
+    "reference": "failed reference validation stops target evaluation and remains recorded",
+    "budget": "unreached precision at frozen cap is censored, not extrapolated"
+  },
+  "cost": {
+    "primary": "setup-inclusive sequential-ensemble wall-clock seconds",
+    "secondary": "separate operation counts; no conversion to gradient-equivalent FLOPs",
+    "setup_charged": "once per method ensemble, includes mode and method-required caches/metric; reuse within ensemble allowed",
+    "conditional_cost": "sampling-only separately reported; not substituted for first-use cost",
+    "excluded": ["data construction and loading", "reference generation", "accuracy calibration", "SW2/POT", "functional evaluation", "gradient audit", "serialization", "parameter search"],
+    "rmse_scope": "single-chain sequential cost is a distinct measured experiment; never divide ensemble setup-inclusive time by replica count",
+    "gpu": "CPU float64 one BLAS thread in phase1; any GPU backend requires a separately frozen hardware/precision/timing validation"
+  },
+  "validation": {
+    "targets": ["gaussian", "synthetic_logistic", "german"],
+    "N": 128,
+    "d": 3,
+    "gaussian_kappa": 10,
+    "logistic_design_kappa": 10,
+    "batch_size": 16,
+    "replicas": 32,
+    "steps": 64,
+    "checkpoints": [0, 8, 32, 64],
+    "step_fraction": 0.1,
+    "adaptive_step_fraction": 0.000001,
+    "audit_states": 8,
+    "audit_batches": 64,
+    "scope": "correctness and pipeline validation only; no efficiency or mixing superiority claims"
+  },
+  "next_stage_candidate_rules": {
+    "status": "candidate rules frozen; production target assets and resolved grid require their own lock before selection/evaluation",
+    "step_fractions": [0.025, 0.05, 0.1, 0.2, 0.4, 0.8],
+    "steps": [128, 512, 2048, 8192, 32768],
+    "main_batch": 32,
+    "batch_sensitivity": [4, 16, 64],
+    "replicas": 512,
+    "selection": "selection seeds choose finite-grid configurations separately by method and budget; heldout seeds evaluate frozen choices only",
+    "tie_break": "lower selection RMSE, then lower measured cost, then smaller step, then shorter run",
+    "failures": "keep failed candidates in complete point cloud; exclude from eligible frontier, never average over surviving seeds only",
+    "practical_advantage": "at least 10 percent cost reduction at matched prespecified accuracy, with paired uncertainty; absence of significance is not equivalence",
+    "accuracy_thresholds": "must be frozen after reference-resolution pilot and before selection seeds; phase1 smoke does not select these thresholds"
+  }
+}

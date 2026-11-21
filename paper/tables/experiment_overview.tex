@@ -1,0 +1,24 @@
+\begin{table}[tb]
+\centering\footnotesize
+\caption{Experiment families, the question each addresses and its protocol status. Labels P1--P4 are used throughout Section~\ref{sec:experiments} and Appendix~\ref{app:protocols}.}\label{tab:exp_overview}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.11\linewidth}>{\raggedright\arraybackslash}p{0.23\linewidth}>{\raggedright\arraybackslash}p{0.24\linewidth}>{\raggedright\arraybackslash}p{0.25\linewidth}>{\raggedright\arraybackslash}p{0.09\linewidth}@{}}
+\toprule
+Study & Target & Question & Protocol status & Section \\
+\midrule
+P1 & German Credit ($N=1{,}000$, $d=61$) & Matched-step accuracy of CV1, CV2 and ULA; cost of CV2 & Frozen held-out primary criterion; frozen A100 replication & \ref{sec:exp_accuracy} \\
+\addlinespace[5pt]
+P2 & Four synthetic logistic targets ($N=30{,}000$, $d=20$); original Bank ($N=45{,}211$, $d=43$) & Fixed-budget accuracy at selected steps & Frozen held-out primary criteria (synthetic); frozen selected-step held-out comparison (Bank) & \ref{sec:exp_accuracy} \\
+\addlinespace[5pt]
+P3A & Bank: original-target tuning and failure analysis; $\log(1+\texttt{previous})$ target & Stability mechanism; optimized time-to-accuracy & Exploratory extension designed after the original Bank results; separate pilot and validation seeds within each stage & \ref{sec:exp_bank} \\
+\addlinespace[5pt]
+P3B & Nested AR(1) synthetic logistic ($d=20$, $N=2{,}000$--$128{,}000$) & Gradient-noise and time-to-accuracy scaling in $N$; full-gradient ULA comparison & Frozen before new observations and outcomes; ULA comparison is a review-motivated two-stage extension & \ref{sec:exp_scaling} \\
+\addlinespace[5pt]
+ESS & German selection seeds; YearMSD & Post-burn-in mixing per unit cost & Descriptive, from existing chain records & \ref{sec:exp_ess} \\
+\addlinespace[5pt]
+P4 & Quadratic Gaussian ($N=256$, $d=10$, $\kappa\in\{10,10^4\}$) & Numerical exactness; geometry versus discretization & Verification with fixed tolerances; no performance search & \ref{sec:exp_gaussian} \\
+\addlinespace[5pt]
+YearMSD & Gaussian ridge regression ($N=463{,}715$, $d=90$) & Geometry under near-exact gradients & Historical, chain-based evaluation & \ref{app:year_geometry} \\
+\bottomrule
+\end{tabular}
+\end{table}

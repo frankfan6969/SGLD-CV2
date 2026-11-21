@@ -1,0 +1,15 @@
+\begin{table}[tb]
+\centering\small
+\caption{Optimized log-transformed Bank: setup-inclusive point-attainment times and speedups. Both reference accuracy means must satisfy SW$_2\leq0.3$ and the variance threshold.}\label{tab:log1p_speedup}
+\begin{tabular}{rrrrrr}
+\toprule
+Variance & CV1 s & CV2 s & Warm ratio & 95\% interval & Cold ratio \\
+\midrule
+0.50 & 0.456 & 0.201 & 2.270 & $[2.259,2.281]$ & 1.348 \\
+0.40 & 1.093 & 0.287 & 3.810 & $[3.785,3.830]$ & 2.240 \\
+0.30 & 3.080 & 0.491 & 6.272 & $[4.284,6.296]$ & 3.976 \\
+0.20 & 8.154 & 1.727 & 4.723 & $[4.710,4.736]$ & 4.070 \\
+\bottomrule
+\end{tabular}
+\par\smallskip{\footnotesize Ratios are CV1/CV2. Intervals are approximate paired-seed bootstrap intervals that reselect the eligible minimum in each resample (Appendix~\ref{app:selection}).}
+\end{table}

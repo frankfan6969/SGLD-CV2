@@ -1,10 +1,23 @@
+# Local environments, caches, credentials and generated runs
 .venv*/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+*.egg-info/
 .DS_Store
 .env
 .env.*
+!.env.example
+*.pem
+*.key
 results/
 /data/
+exports/
 **/build/
+*.aux
+*.log
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz

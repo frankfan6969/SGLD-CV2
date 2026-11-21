@@ -1,0 +1,35 @@
+{
+  "stage": "Post-result descriptive cost decomposition of existing P3B",
+  "datasets": [
+    2000,
+    8000,
+    32000,
+    128000
+  ],
+  "representative_thresholds": [
+    0.5,
+    0.4,
+    0.3,
+    0.2
+  ],
+  "full_sweep": "All41 thresholds, warm/cold, point/simultaneous-supported frozen-grid optima",
+  "prefix_sampling": "At selected checkpoint K, sampling_seconds=recorded_warm_total-anchor_seconds_attributed-actual_setup_seconds. Never divide full4096-horizon time by a shorter selected K.",
+  "unit": "Per-step cost is wall-clock for one batched update of512 replicas; not a serial single-replica cost.",
+  "identity": "S=(K1/K2)*(c1/c2)*D, c_m=prefix_sampling_m/K_m, D=(1+A1/Q1)/(1+A2/Q2), A=anchor+setup,Q=prefix_sampling. Ratios of endpoint factors multiply exactly to S(Nmax)/S(Nmin).",
+  "counterfactuals": "Sampling-only and removing only anchor attribution are bookkeeping views, not production rankings or rerun experiments.",
+  "matched_controls": "Compare raw sampling_seconds/K at common validated n,h,horizon and same seed within eachN; canonical h rounding to12 decimals only resolves numerical1e-14 differences. Retain failures explicitly; no success-lane selection.",
+  "uncertainty": "10000 paired whole-seed bootstrap, fixed selected(n,h,K) for decomposition; existing reselected-optimum frontier CIs remain separate. Confidence conditional on chosen config/reference and measured implementation. This is an accounting decomposition, not a randomized causal identification of all runtime differences.",
+  "bootstrap_seed": 211900,
+  "draws": 10000,
+  "input_hashes": {
+    "exports/p3b_n_scaling_v1/analysis.json": "db35f82bfc7a2c20eefabbbdea473a6e9bc6ed0c043f07298111d5639d5ed41c",
+    "results/p3b_n_scaling_v1/N2000/optimized/validation_summary.json": "a22ebfde3026a28196282aa9a85dd2a764e1dbb543a2c02cbaf21582b2451b5f",
+    "results/p3b_n_scaling_v1/N2000/optimized/PROTOCOL.json": "426fb93bef5a964f47bc4bc5f9c8377fc8838a719971c12bce20dcfdfb1ffba8",
+    "results/p3b_n_scaling_v1/N8000/optimized/validation_summary.json": "91448fc89990ce131d4edd12b12adaed8cfa777752330eaa940b5fb5119413cc",
+    "results/p3b_n_scaling_v1/N8000/optimized/PROTOCOL.json": "82400cceeb297caaf31767f0d7455a564c7f70e820a72bf39a6e9ec534eb59eb",
+    "results/p3b_n_scaling_v1/N32000/optimized/validation_summary.json": "e4777f44883ae0dfc048ea0ed466b97b9a231fb95aacbbad574baedd5789361d",
+    "results/p3b_n_scaling_v1/N32000/optimized/PROTOCOL.json": "43701700f60acc88d85da7d1d4c38cc0c7b347454c0ad9f1dc064c342d02a07a",
+    "results/p3b_n_scaling_v1/N128000/optimized/validation_summary.json": "262a602ce302d55d7592f20fbdc9eef9aa7a11066a032d28d641c3ef6e5c6b06",
+    "results/p3b_n_scaling_v1/N128000/optimized/PROTOCOL.json": "4d417b158814b084dbeeced60414d7f47146cf1190506fb2c1f68751f4cc475b"
+  }
+}

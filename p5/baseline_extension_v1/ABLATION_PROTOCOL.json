@@ -1,0 +1,148 @@
+{
+  "name": "P5 small fixed-metric ablation v1",
+  "classification": "Review-motivated prospectively frozen extension; not original confirmatory result",
+  "target": "log1p Bank",
+  "assets": "exports/p3a_feature_sensitivity_v1/log1p_previous",
+  "backend": "JAX CPU float64, serialized after ULA baseline extension",
+  "geometries": [
+    "identity",
+    "diagonal",
+    "full"
+  ],
+  "LP": {
+    "identity": 10330.314089490992,
+    "diagonal": 6.627197315645166,
+    "full": 0.9999999999999891
+  },
+  "metric_definitions": {
+    "identity": "I",
+    "diagonal": "diag(H(anchor)+1e-10 I)^-1, not diag(H^-1)",
+    "full": "(H(anchor)+1e-10 I)^-1"
+  },
+  "prior_precision": 1.0,
+  "step_coefficients": [
+    0.025,
+    0.1,
+    0.4,
+    1.6
+  ],
+  "batch_sizes": [
+    1,
+    16,
+    64
+  ],
+  "methods": [
+    "cv1",
+    "cv2",
+    "ula"
+  ],
+  "pilot": {
+    "seeds": [
+      430100,
+      430101
+    ],
+    "replicas": 64,
+    "horizon": 1024,
+    "checkpoints": [
+      128,
+      256,
+      512,
+      1024
+    ]
+  },
+  "selection": "Stable complete settings only. Four-dimensional nondomination over warm,cold,SW2,variance; pick highest rank0 checkpoint count,lowest min rank,largest inverse-rank coverage,then smaller h. Up to1 step per CV method/batch and2 ULA steps per geometry. No refinement.",
+  "validation": {
+    "seeds": [
+      430200,
+      430201,
+      430202,
+      430203,
+      430204,
+      430205,
+      430206,
+      430207
+    ],
+    "replicas": 512,
+    "horizon": 2048,
+    "checkpoints": [
+      128,
+      256,
+      384,
+      512,
+      1024,
+      2048
+    ]
+  },
+  "metrics": {
+    "sw2": "same approved target-specific whitening,projections and two reference clouds",
+    "variance": "relative coordinate variance NRMSE from per-replica ergodic sums over steps1..K; no discarded burn-in, intentionally finite-horizon from-mode error",
+    "threshold_sw2": 0.3,
+    "variance_thresholds": [
+      0.2,
+      0.21,
+      0.22,
+      0.23,
+      0.24,
+      0.25,
+      0.26,
+      0.27,
+      0.28,
+      0.29,
+      0.3,
+      0.31,
+      0.32,
+      0.33,
+      0.34,
+      0.35,
+      0.36,
+      0.37,
+      0.38,
+      0.39,
+      0.4,
+      0.41,
+      0.42,
+      0.43,
+      0.44,
+      0.45,
+      0.46,
+      0.47,
+      0.48,
+      0.49,
+      0.5,
+      0.51,
+      0.52,
+      0.53,
+      0.54,
+      0.55,
+      0.56,
+      0.57,
+      0.58,
+      0.59,
+      0.6
+    ]
+  },
+  "bootstrap": {
+    "draws": 10000,
+    "seed": 439900
+  },
+  "failure": "Any failed replica, missing seed or incomplete run excludes complete configuration at all checkpoints; retain failed/censored records",
+  "budgets": {
+    "total_research_seconds": 10800,
+    "per_run_sampler_seconds": 600
+  },
+  "cost": "Same setup-inclusive CPU attribution. Diagonal metric assembly uses observationwise squared features O(Nd), applied elementwise O(d); full metric assembly/factorization and application recorded separately. CV2 still requires FULL likelihood Hessian correction even under identity/diagonal. Shared anchor fit, exact LP planning from frozen target Hessian and reference/scoring work disclosed separately; no whole-sampler O(d) claim.",
+  "ula_exact_block": 4096,
+  "scope": "Compare optimized bounded grids per metric and method; matched seeds across geometry, but separately tuned parameters. Bands per geometry, not simultaneous across all geometries. Budget failures do not prove inaccuracy.",
+  "input_hashes": {
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/target.npz": "9a4f12dc4ea20017af8e99df6859ca63a82e37b9413352d1770edb71442ff4fa",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/scoring.npz": "9481e6b9b62379d27b022426eda6bddbbfd32ed3ebc466ad960f4b7df39be360",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/metadata.json": "d736df2962e50335f083b1432dfcfe21329fccecf47ecc74ffa42198641666ce",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/reference_pair.json": "50dd315b25956130533dc0ff8c63a854d90678f31677a824f32b4bd368280bd9",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/reference_0.json": "5202d3755a457dc7a043d500ce0c7f7549748f64725fdd2b71d55b2ec0ad8950",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/reference_1.json": "aa0885c4afe6cb293f86b6aa72578924c1d9c2a9273d6ab7375628572a171080",
+    "p5/baseline_extension_v1/metric_kernels.py": "fb32fc38794ed018e8a51b029b3348722d46f42d64886a00a44ed60c627d663d",
+    "p5/baseline_extension_v1/extension_kernels.py": "b1a6f10152de21ad8a27d74c21f5ffc6e3d5537c6016123fb3596a5ddc756608",
+    "gpu_replication/batched_sampler.py": "64ea7103d380eeb5a8758d5c915dee261f1ddbd0ea96e31449ad514560131edb"
+  },
+  "pre_run_source_lock_note": "Fixed-input update checks call actual JAX metric_step versus independent NumPy; locked before any ablation runs."
+}

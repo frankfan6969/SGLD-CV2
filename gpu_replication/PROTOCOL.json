@@ -1,0 +1,24 @@
+{
+  "stage": "P1 GPU Replication validation + representative benchmark",
+  "dtype": "float64",
+  "gpu": "A100",
+  "R": 512,
+  "T": 2048,
+  "batch": 32,
+  "h": 0.1,
+  "chunk": 128,
+  "validation": "same minibatch indices and Gaussian normals, four methods x three metrics x two likelihoods; Gaussian CV2=ULA; no failed-replica revival",
+  "tolerances": {
+    "gradient_rtol": 1e-10,
+    "gradient_atol": 1e-09,
+    "one_step_rtol": 1e-10,
+    "one_step_atol": 1e-09
+  },
+  "full_run_gate": "All A100 numerical checks pass and each method is >=2x faster than sequential NumPy on same host; gate only permits proposing/finally freezing full GPU replication, never automatically starts 120 runs",
+  "comparison": "also benchmark batched JIT CPU, separating vectorization from GPU acceleration",
+  "timing": "synchronize every timed result; separate compile, transfer/cache/metric, sampler, online functionals and host output; full replica history stored only per 128-step block",
+  "rng": "JAX per-replica fold_in(seed,replica), separate purpose1 batches/purpose2 noise, fold_in(global_iteration); without-replacement batches; paired across methods; not NumPy-identical",
+  "failure": "permanent nonfinite/radius>100sqrt(d); whole failed ensemble invalid. Device padded work and logical transitions separately reported",
+  "CPU_heldout_unchanged": true,
+  "full_GPU_replication_started": false
+}

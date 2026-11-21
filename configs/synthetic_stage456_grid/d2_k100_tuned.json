@@ -1,0 +1,65 @@
+{
+  "purpose": "pilot",
+  "metric": {
+    "batches": 32,
+    "seed": 8100,
+    "alpha": 0.99,
+    "epsilon": 1e-05
+  },
+  "tuning": {
+    "seeds": [
+      100
+    ],
+    "batch_sizes": [
+      8,
+      32
+    ],
+    "step_fractions": [
+      0.1,
+      0.5
+    ],
+    "steps": 80,
+    "replicas": 24
+  },
+  "evaluation": {
+    "seeds": [
+      300,
+      301
+    ],
+    "steps": 150,
+    "replicas": 48,
+    "reference_size": 48
+  },
+  "chains": {
+    "count": 4,
+    "warmup": 150,
+    "draws": 400
+  },
+  "audit": {
+    "states": 8,
+    "batches": 24,
+    "radii": [
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ]
+  },
+  "reference": {
+    "chains": 4,
+    "warmup": 300,
+    "draws": 600,
+    "seed": 7000,
+    "step_size": 0.3,
+    "leapfrog_steps": 12
+  },
+  "problem": {
+    "kind": "synthetic_logistic",
+    "N": 500,
+    "d": 2,
+    "design_kappa": 100,
+    "seed": 221,
+    "prior_precision": 1.0
+  },
+  "comparison": "tuned"
+}

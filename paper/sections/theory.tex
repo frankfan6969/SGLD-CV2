@@ -1,0 +1,537 @@
+\section{Theoretical Analysis}
+\label{sec:theory}
+\subsection{Wasserstein bound}
+Because SGLD targets a continuous distribution, we need a metric that quantifies how close the distribution $\nu_k$ of the $k$-th iterate is to the true posterior $\pi$. The 2-Wasserstein distance $W_2(\nu_k,\pi)$ is a natural choice: it metrizes weak convergence while accounting for the geometry of the parameter space, and its squared form admits a clean coupling argument that translates the oracle-noise variance of our gradient estimator directly into a recursive bound on sampling error. Controlling $W_2$ therefore lets us compare SGLD-CV2 against Baker's SGLD-CV on equal footing and makes the benefit of the quartic variance bound (\Cref{prop:quartic}) precise in terms of the distribution's actual distance to stationarity.
+From lectures, our sampling target is:
+$$
+    \pi(\theta) \propto e^{-U(\theta)}, \quad \theta \in \mathbb{R}^d,
+$$
+where $U : \mathbb{R}^d \to \mathbb{R}$ is differentiable.
+Recall the overdamped Langevin diffusion:
+$$
+    d\theta_t = -\nabla U(\theta_t)\,dt + \sqrt{2}\,dB_t.
+$$
+In the integral form:
+$$
+    \theta_t = \theta_0 - \int_0^t \nabla U(\theta_s)\,ds + \sqrt{2}\,B_t.
+$$
+From \citet{welling2011}:
+$$U(\theta) = U_0(\theta) + \sum_{i=1}^N U_i(\theta)$$
+where $U_0(\theta) = -\log p(\theta)$ is the prior term and $U_i(\theta) = -\log p(y_i \mid \theta)$ are the likelihood terms. And so:
+\begin{align}
+    \nabla U(\theta) &= \nabla U_0(\theta) + \sum_{i=1}^N \nabla U_i(\theta), \\
+    \nabla^2 U(\theta) &= \nabla^2 U_0(\theta) + \sum_{i=1}^N \nabla^2 U_i(\theta).
+\end{align}
+At each iteration, SGLD uses the mini-batch gradient
+\begin{equation}
+    \nabla \tilde{U}(\theta_k) = \nabla U_0(\theta_k) 
+    + \frac{N}{n}\sum_{i \in S_k} \nabla U_i(\theta_k)
+\end{equation}
+where $S_k \subset \{1,\ldots,N\}$ is a uniformly sampled mini-batch of size 
+$|S_k| = n$. This is an unbiased estimator of the full-batch gradient, i.e. $\mathbb{E}_{S_k}\!\left[\nabla \hat{U}(\theta_k)\right] = \nabla U(\theta_k)$.
+
+Our proposed \textbf{second-order control variate} is:
+$$C_k = \frac{N}{n}\sum_{i \in S_k} [\nabla U_i(\hat\theta) + \nabla^2 U_i(\hat\theta)(\theta_k - \hat\theta)]$$
+with deterministic expectation 
+$$\mathbb{E}[C_k] = \left[\nabla U(\hat\theta) - \nabla U_0(\hat\theta)\right] + \left[\nabla^2 U(\hat\theta) - \nabla^2 U_0(\hat\theta)\right](\theta_k - \hat\theta)$$
+Applying $\nabla\hat{U}_{\text{CV2}}(\theta_k) = \nabla\tilde{U}(\theta_k) - C_k + \mathbb{E}[C_k]$ as a control-variated unbiased estimator of the full-batch gradient:
+\begin{align}
+\nabla\hat{U}_{\text{CV2}}(\theta_k) 
+    &= \nabla U_0(\theta_k) + \bigl[\nabla U(\hat\theta) 
+        + \nabla^2 U(\hat\theta)(\theta_k - \hat\theta)\bigr] - \bigl[\nabla U_0(\hat\theta) 
+        + \nabla^2 U_0(\hat\theta)(\theta_k - \hat\theta)\bigr] \notag\\
+    &\quad + \frac{N}{n}\sum_{i \in S_k}\bigl(\nabla U_i(\theta_k) 
+        - \nabla U_i(\hat\theta) 
+        - \nabla^2 U_i(\hat\theta)(\theta_k - \hat\theta)\bigr).
+    \label{eq:cv2-theory}
+\end{align}
+% \jay{I think we have duplicate expositions above on SGLD-CV2 with section 3. Michelle since you put this in first, feel free to trim mine.}
+\begin{assumption}\label{ass:convex}[Strongly log-concave target, i.e.\ strongly convex potential]
+There exist positive constants $m$ and $M$ such that the following holds for the potential $U$:
+\begin{align}
+    U(\theta) - U(\theta') - \nabla U(\theta')^\top (\theta - \theta') &\geq \frac{m}{2} \|\theta - \theta'\|^2 \\
+    \|\nabla U(\theta) - \nabla U(\theta')\| &\leq M \|\theta - \theta'\|.
+\end{align}
+for all $\theta, \theta' \in \mathbb{R}^d$.
+\end{assumption}
+We further need a Lipschitz condition for each of the likelihood terms in order to bound the variance of our control-variate estimator of the gradient.
+\begin{assumption}[Lipschitz Gradients]
+\label{ass:grad}
+    There exist constants $L_0, \ldots, L_N$ such that
+\begin{equation}
+    \|\nabla U_i(\theta) - \nabla U_i(\theta')\| \leq L_i \|\theta - \theta'\|, 
+    \quad \text{for } i = 0, \ldots, N.
+\end{equation}
+\end{assumption}
+\begin{assumption}[Lipschitz Hessians]
+\label{ass:hess}
+    There exist constants $M_0, \ldots, M_N$ such that
+\begin{equation}
+|\nabla^2 U_i(\theta) - \nabla^2 U_i(\theta')| \leq M_i |\theta - \theta'|, \quad \text{for } i = 0, \ldots, N.
+\end{equation}
+\end{assumption}
+
+Using \Cref{ass:hess} we are able to derive a bound on the variance of the gradient estimate of SGLD-CV. This bound is formally stated in Proposition 1.
+
+\begin{proposition}\label{prop:quartic}
+\textit{Under Assumption 3. Let $\theta_k$ be the state of SGLD-CV2 at the $k^{th}$ 
+iteration, with stepsize $h$ and centering value $\hat\theta$. Assume we estimate 
+the gradient using the second-order control variate estimator. Define $\xi_k := \nabla \hat{U}(\theta_k) - \nabla U(\theta_k)$, 
+so that $\xi_k$ measures the noise in the gradient estimate $\nabla \hat{U}$ 
+and has mean $0$. Then for all $\theta_k, \hat{\theta} \in \mathbb{R}^d$, for all 
+$k = 1, \ldots, K$ we have}
+\begin{equation}\label{eq:lemma1}
+\mathbb{E}\|\xi_k\|^2 \leq \frac{N}{4n} \left( \sum_{i=1}^N M_i^2 \right) \mathbb{E}\|\theta_k - \hat\theta\|^4.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Our proof follows similarly to \citet{baker2017}.
+Note that:
+$$\nabla^2 U(\hat\theta)(\theta_k - \hat\theta) = \sum_{i=1}^N \nabla^2 U_i(\hat\theta)(\theta_k - \hat\theta)\bigr)$$
+\begin{align*}
+\mathbb{E}\|\xi_k\|^2 
+&= \mathbb{E}\left\|\nabla\hat{U}_{\text{CV2}}(\theta_k) - \nabla U(\theta_k)\right\|^2 \\
+&= \mathbb{E}\Bigg\|
+    \nabla U_0(\theta_k) + \bigl[\nabla U(\hat\theta) 
+        + \nabla^2 U(\hat\theta)(\theta_k - \hat\theta)\bigr] - \bigl[\nabla U_0(\hat\theta) 
+        + \nabla^2 U_0(\hat\theta)(\theta_k - \hat\theta)\bigr] \notag\\
+    &\quad + \frac{N}{n}\sum_{i \in S_k}\bigl(\nabla U_i(\theta_k) 
+        - \nabla U_i(\hat\theta) 
+        - \nabla^2 U_i(\hat\theta)(\theta_k - \hat\theta)\bigr) - \nabla U(\theta_k)
+    \Bigg\|^2 \\
+&= \mathbb{E}\Bigg\|
+    \bigl[\nabla U_0(\theta_k) - \nabla U_0(\hat\theta) - \nabla^2 U(\hat\theta)(\theta_k - \hat\theta)\bigr] \\
+&\quad + \frac{1}{n}\sum_{i \in S_k} N\bigl[\nabla U_i(\theta_k) 
+        - \nabla U_i(\hat\theta) 
+        - \nabla^2 U_i(\hat\theta)(\theta_k - \hat\theta)\bigr] \notag\\
+    &\quad - \bigl[\nabla U(\theta_k) - \nabla U(\hat\theta) - \nabla^2 U_0(\hat\theta)(\theta_k - \hat\theta)\bigr]
+    \Bigg\|^2 \\
+\end{align*}
+Applying inequality $\mathbb{E}\|\frac{1}{n}\sum Z_i - \mathbb{E}[Z]\|^2 \leq \frac{1}{n^2}\mathbb{E}\sum\|Z_i - \mathbb{E}[Z]\|^2$:
+
+\nopagebreak[4]
+\begin{align*}
+\begin{aligned}
+\mathbb{E}\|\xi_k\|^2 &\leq \frac{1}{n^2} \mathbb{E} \sum_{i \in S_k} \Bigg\| \Bigl[\nabla U(\theta_k) - \nabla U(\hat\theta) - \nabla^2 U(\hat\theta)(\theta_k - \hat\theta)\Bigr] \\
+&\quad - \biggl( \Bigl[\nabla U_0(\theta_k) - \nabla U_0(\hat\theta) - \nabla^2 U_0(\hat\theta)(\theta_k - \hat\theta)\Bigr] \\ &\quad \quad + N\Bigl[\nabla U_i(\theta_k) - \nabla U_i(\hat\theta) - \nabla^2 U_i(\hat\theta)(\theta_k - \hat\theta)\Bigr] \biggr) \Bigg\|^2.
+\end{aligned}
+\end{align*}
+For a uniformly sampled data point $I$:
+$$
+    R = N \Bigl[ \nabla U_I(\theta_k) - \nabla U_I(\hat\theta) 
+    - \nabla^2 U_I(\hat\theta)(\theta_k - \hat\theta) \Bigr].
+$$
+Taking the expectation over the uniform distribution of $I$:
+\begin{align*}
+    \mathbb{E}_I[R] 
+    &= \sum_{i=1}^N \frac{1}{N} \Bigg( N \Bigl[ \nabla U_i(\theta_k) 
+        - \nabla U_i(\hat\theta) 
+        - \nabla^2 U_i(\hat\theta)(\theta_k - \hat\theta) \Bigr] \Bigg) \\
+    &= \sum_{i=1}^N \Bigl[ \nabla U_i(\theta_k) 
+        - \nabla U_i(\hat\theta) 
+        - \nabla^2 U_i(\hat\theta)(\theta_k - \hat\theta) \Bigr].
+\end{align*}
+Since $U = U_0 + \sum_{i=1}^N U_i$:
+\begin{align*}
+    \mathbb{E}_I[R] 
+    &= \Bigl[ \nabla U(\theta_k) - \nabla U(\hat\theta) 
+        - \nabla^2 U(\hat\theta)(\theta_k - \hat\theta) 
+        \Bigr] \\
+&\quad - \Bigl[ \nabla U_0(\theta_k) - \nabla U_0(\hat\theta) 
+        - \nabla^2 U_0(\hat\theta)(\theta_k - \hat\theta) 
+        \Bigr].
+\end{align*}
+Substituting into the inequality, and using the fact that for any random variable $R$, 
+we have that $\mathbb{E}\|R - \mathbb{E}R\|^2 \leq \mathbb{E}\|R\|^2$:
+\begin{align*}
+\mathbb{E}\|\xi_k\|^2 
+&\leq \frac{1}{n^2}\,\mathbb{E}\sum_{i \in S_k}
+    \left\|\mathbb{E}_I[R] - R_i\right\|^2 = \frac{1}{n^2}\,\mathbb{E}\sum_{i \in S_k}
+    \left\|R_i - \mathbb{E}_I[R]\right\|^2 \\
+&\leq \frac{1}{n^2}\,\mathbb{E}\sum_{i \in S_k}
+    \left\|R_i\right\|^2 = \frac{1}{n}\,\mathbb{E}_I\left\|R_I\right\|^2
+\end{align*}
+ 
+
+Using this where $\mathbb{E}_I$ refers to 
+expectation with respect to the sampled datum index, $I$ and and the Lipschitz results of Assumption 3, i.e. $$\left\| \nabla U_i(x) - \nabla U_i(y) - \nabla^2 U_i(y)(x - y) \right\| \leq \frac{M_i}{2} \|x - y\|^2$$
+We have:
+\begin{align}
+\mathbb{E}\|\xi_k\|^2 
+&\leq \frac{N}{n} \sum_{i=1}^N \left| \nabla U_i(\theta_k) - \nabla U_i(\hat\theta) - \nabla^2 U_i(\hat\theta)(\theta_k - \hat\theta) \right|^2 \notag\\
+&\leq \frac{N}{n} \sum_{i=1}^N \left( \frac{M_i}{2} |\theta_k - \hat\theta|^2 \right)^2 \notag\\
+&= \frac{N}{4n} \left( \sum_{i=1}^N M_i^2 \right) \|\theta_k - \hat\theta\|^4
+\end{align}
+from which the claimed bound follows from taking expectation of both sides.
+\end{proof}
+
+If Assumption 1 also holds, then we 
+can choose $M = \sum_{i=0}^N L_i$, and our bound \eqref{eq:lemma1} implies
+$$
+    \mathbb{E}\|\xi_k\|^2 \leq \frac{M^2}{n}\,\mathbb{E}\left\|\theta_k - \hat{\theta}\right\|^2.
+$$
+We will use this form of the bound for the rest of the analysis. In order to consider how SGLD-CV2 scales with $N$ we need to make assumptions 
+on the properties of the target and how these change with $N$. As in \citet{baker2017} we will focus on the following, strong, assumption that 
+each likelihood term in the target is strongly log-concave. As we discuss 
+later, our results apply under weaker conditions.
+
+\begin{assumption}[Uniform Lipschitz Hessians]
+\label{ass:hess-unif} \textit{Assume there exists a positive constant $H$ such that the Hessian Lipschitz constants for all likelihood terms are uniformly bounded:}
+\begin{equation}
+M_i \leq H, \quad \text{for all } i = 1, \ldots, N.
+\end{equation}
+\end{assumption}
+Under this assumption, we can simplify the variance bound from Proposition 1. Since $\sum_{i=1}^N M_i^2 \leq N H^2$, our bound implies:
+\begin{equation}
+\mathbb{E}\|\xi_k\|^2 \leq \frac{N^2 H^2}{4n} \mathbb{E}\|\theta_k - \hat\theta\|^4.
+\end{equation}
+To see the theoretical benefit of using second-order control variates, we can compare this variance bound with the variance of the simple SGLD estimator and the first-order SGLD-CV estimator. If we assume that $\|\nabla U_i(\theta)\|$is bounded by some constant $\sigma$, Dubey et al. (2016) show that for standard SGLD:
+\begin{equation}
+\mathbb{E}\left\|\nabla\hat{U}(\theta) - \nabla U(\theta)\right\|^2 \leq \frac{2N^2\sigma^2}{n} \in O(N^2/n).
+\end{equation}
+We can see that the bound on the gradient estimate variance for SGLD-CV2 depends on the fourth power of the distance between $\theta_k$ and $\hat\theta$. Appealing to the Bernstein-von Mises theorem (Le Cam, 2012), under standard asymptotics we would expect the squared distance $\mathbb{E}\|\theta_k - \hat\theta\|^2$ to be $O(1/N)$, if $\hat\theta$ is within $O(N^{-1/2})$ of the posterior mean, once the MCMC algorithm has burnt in. Consequently, the fourth moment $\mathbb{E}\|\theta_k - \hat\theta\|^4$ becomes $O(N^{-2})$. Substituting this into our bound, we find:
+\begin{equation}
+\mathbb{E}\|\xi_k\|^2 \leq \frac{N^2 H^2}{4n} O(N^{-2}) = O(1/n).
+\end{equation}
+This suggests that using a second-order control variate gives an $O(N^2)$ reduction in variance compared to standard SGLD, and an $O(N)$ reduction compared to the first-order SGLD-CV, and this is crucial in the computational cost improvements we show in
+the next section.
+\subsection{Computational cost of SGLD-CV2}
+We investigate the Wasserstein given by the SGLD-CV2 algorithm at each iteration and the true posterior as $N$ changes.
+
+\textbf{Theorem 1} \textit{Under Assumption 1, suppose $h < 2m/(2M^2 + m^2)$. Let $\nu_k$ denote the distribution of the $k$-th iterate of SGLD-CV2 and let $\pi \propto e^{-U(\theta)}$ be the target posterior. let $\bar\theta$ be the mean of $\pi$. Then
+\begin{equation}
+    W_2^2(\nu_{k+1}, \pi) \leq \Big[(1-mh)\,W_2(\nu_k,\pi) + \alpha M(h^3 d)^{1/2}\Big]^2 + h^2\sigma^2_{\emph{CV2}},
+\end{equation}
+where $\alpha = 7\sqrt{2}/6$ and
+\begin{equation}
+    \sigma^2_{\emph{CV2}} = \frac{2N\sum_{i=1}^N M_i^2}{n}\left(8\sup_{k\geq 0}\,\mathbb{E}\big[\|\theta_k - \theta^*\|^4\big] + 8\|\theta^* - \bar\theta\|^4 + \|\hat\theta - \bar\theta\|^4\right),
+\end{equation}
+where $\theta^*$ is the global minimum of $U$. In particular, $W_2(\nu_k, \pi)$ contracts geometrically at rate $(1-mh)$, with bias term scaling asymptotically as $O(h\sigma_{\emph{CV2}}) = O(h\sqrt{N/n})$.}
+
+\begin{proof}
+Let $\pi$ be the invariant distribution of the underlying dynamics, so that it has density $e^{-U(\theta)} \propto p(\theta|\mathbf{x})$, and define $W_2(\nu_k, \pi)$ to be the Wasserstein distance between $\nu_k$ and $\pi$. Recall $\xi_k$ is the SGLD-CV2 gradient noise term, i.e. $\xi_k := \nabla \hat{U}(\theta_k) - \nabla U(\theta_k)$. Then we can write a single step of SGLD-CV2 as
+\begin{equation}\label{eq:update-rule}
+    \theta_{k+1} = \theta_k - h\nabla U(\theta_k) - h\xi_k + \sqrt{2h}\zeta_k,
+\end{equation}
+
+We have that $\theta_k \sim \nu_k$, and follow similarly to the proof of \citet{dalalyan2017}[Proposition 2]. First define $Y_0$ to be a draw from the invariant distribution $\pi$, such that the joint distribution of $Y_0$ and $\theta_k$ minimizes $\mathbb{E}\|Y_0 - \theta_k\|^2$. Here $\|\cdot\|$ denotes the Euclidean distance for $\mathbb{R}^d$. It follows that $\mathbb{E}\|Y_0 - \theta_k\|^2 = W_2^2(\nu_k, \pi)$.
+
+Let $B_t$ be a $d$-dimensional Wiener process, independent of $\theta_k, Y_0$ and $\xi_k$ but which we couple to the injected noise $\zeta_k$ so that $B_h = \sqrt{h}\zeta_k$. Now let $Y_t, t > 0$, follow the diffusion
+\begin{equation}
+    Y_t = Y_0 - \int_0^t \nabla U(Y_s)ds + \sqrt{2}B_t.
+\end{equation}
+
+Let $\Delta_k = Y_0 - \theta_k$ and $\Delta_{k+1} = Y_h - \theta_{k+1}$. Since we started the process $Y_t$ from $Y_0 \sim \pi$, then it follows that $Y_t \sim \pi$ for all $t > 0$. Also since $W_2^2(\nu_{k+1}, \pi)$ minimizes the expected squared distance between two random variables with marginals $\nu_{k+1}$ and $\pi$ then it follows that
+\begin{equation}
+    W_2^2(\nu_{k+1}, \pi) \leq \mathbb{E}\|\Delta_{k+1}\|^2 \tag{$\star$}\label{eq:wass-id}
+\end{equation}
+
+Let us define
+\begin{align}
+    A &= \nabla U(\theta_k + \Delta_k) - \nabla U(\theta_k), \\
+    V &= \int_0^h [\nabla U(Y_t) - \nabla U(Y_0)]dt.
+\end{align}
+
+Then by the unbiasedness of the gradient estimation, $\xi_k$ has mean 0 regardless of the value of $\theta_k$. Thus
+\begin{align}
+    \mathbb{E}\|\Delta_{k+1}\|^2 &= \mathbb{E}\|\Delta_k - hA - V\|^2 + h^2\mathbb{E}\|\xi_k\|^2 \notag \\
+    &\leq \mathbb{E}\big[\|\Delta_k - hA\| + \|V\|\big]^2 + h^2\mathbb{E}\|\xi_k\|^2.
+\end{align}
+
+We can then apply Lemmas 2 and 4 in \citet{dalalyan2017}, stated below in Lemmas 4 and 5, as well as applying the gradient noise bound in Proposition 1, to obtain a bound on $W_2^2(\nu_{k+1}, \pi)$ given $W_2^2(\nu_k, \pi)$.   
+
+\textbf{Lemma 4.} \textit{With $A$ as defined in (27), if $h < 2m/(2M^2 + m^2)$, then $\|\Delta_k - hA\| \leq (1 - mh)\|\Delta_k\|.$}
+
+The original lemma by Dalalyan and Karagulyan (2017) assumed $h < 2/(m + M)$, but this holds when $h < 2m/(2M^2 + m^2)$ as $m \leq M$.
+
+\textbf{Lemma 5.} \textit{Under Assumption 1. Let $V$ be as defined in (28), then}
+\begin{equation}
+    \mathbb{E}\|V\| \leq \frac{1}{2}(h^4 M^3 d)^{\frac{1}{2}} + \frac{2}{3}(2h^3 d)^{\frac{1}{2}}M.
+\end{equation}
+
+ Recall Proposition $\labelcref{prop:quartic}$:
+\begin{align}
+    \mathbb{E}\|\xi_k\|^2 &\leq \frac{N \sum_{i=1}^N M_i^2}{4n} \mathbb{E}\|\theta_k - \hat\theta\|^4 \notag
+\end{align}
+% Now consider the second expectation term on the RHS. Recall that $\bar\theta$ be the mean of the target posterior $\pi$:
+% \begin{equation}\label{eq:sgldcv2var}
+%     \mathbb{E}\|Y_0 - \hat\theta\|^4 \leq 8\mathbb{E}\|\hat\theta - \bar\theta\|^4 + 8\mathbb{E}\|Y_0 - \bar\theta\|^4.
+% \end{equation}
+% % Let $\theta^*$ denote the global minimum of the potential (the MAP estimate), such that $\nabla U(\bar\theta) = 0$.
+% % TODO: check necessity
+% It follows that
+% \begin{equation}\label{eq:bound_4th}
+%     \mathbb{E}\|\xi_k\|^2 \leq \frac{2N \sum M_i^2}{n} \mathbb{E}\|\theta_k - Y_0\|^4 + \frac{16N \sum M_i^2}{n} \left[ \mathbb{E}\|\hat\theta - \bar\theta\|^4 + \mathbb{E}\|Y_0 - \bar\theta\|^4 \right].
+% \end{equation}
+
+% Recall that $Y_0$ is drawn from the stationary distribution $\pi \propto \exp(-U(\theta))$. Under Assumption 1, the potential $U$ is $m$-strongly convex and the measure is $m$-strongly log-concave. By the classical Bakry-\'Emery criterion, strongly log-concave measures satisfy a Logarithmic Sobolev Inequality with a constant bounded by $1/m$ \citet{bakry_emery_2006}. When a probability measure satisfies a log-Sobolev inequality, all of its marginals exhibit sub-Gaussian tails. So $\pi$ is sub-Gaussian with a variance proxy of $1/m$, therefore its fourth moment scales as:
+% \begin{equation}\label{eq:target_4th}
+%     \mathbb{E}_{Y_0 \sim \pi}\|Y_0 - \bar\theta\|^4 \leq C_\pi \frac{d^2}{m^2},
+% \end{equation}
+
+% for some constant $C_\pi$ dependent on $\pi$. Now note that the second expectation term in $\labelcref{eq:bound_4th}$ is bounded by how good our found $\hat\theta$ in the Pre-processing step of the SGLD-CV2 algorithm is, i.e. how close it is to the posterior mean, so there is no further work to be done here to bound it.
+
+We show that the fourth moment of the iterates, $\mathbb{E}\|\theta_k - \hat\theta\|^4$ is uniformly bounded for all $k \geq 0$ using a Foster-Lyapunov drift condition. To establish the restorative drift, we must center our analysis on the MAP estimate $\theta^*$ (where the true gradient $\nabla U(\theta^*) = 0$). Let $e_k = \theta_k - \theta^*$ and define the Lyapunov function:
+$$V(\theta_k) = \|e_k\|^4$$
+
+Write our SGLD update rule as:
+$$e_{k+1} = e_k - hg_k + \sqrt{2h}\zeta_k \quad \quad \quad \quad g_k \coloneqq \nabla\hat{U}_{\text{CV2}}(\theta_k)$$
+
+We expand:
+$$\|e_{k+1}\|^4 = (\|e_k - hg_k\|^2 + 2\sqrt{2h}\langle e_k - hg_k, \zeta_k \rangle + 2h\|\zeta_k\|^2)^2$$
+
+First we fix $g_k$ and take the expectation with respect to $\zeta$. Every term containing an odd power of $\zeta_k$ vanishes because the odd moments of a Gaussian are zero. Using the standard isotropic Gaussian properties of $\zeta_k \sim \mathcal{N}(0, I_d)$ we have:
+
+\[
+  \mathbb{E}_{\zeta}\bigl[\langle e_k - hg_k, \zeta_k \rangle^2\bigr] = \|e_k - hg_k\|^2,
+  \qquad
+  \mathbb{E}_{\zeta}\bigl[\|\zeta_k\|^2\bigr] = d,
+  \qquad
+  \mathbb{E}_{\zeta}\bigl[\|\zeta_k\|^4\bigr] = d(d+2).
+\]
+
+Then:
+\begin{align}
+\mathbb{E}_{\zeta}\bigl[\|e_{k+1}\|^4\bigr]
+  &= \|e_k - hg_k\|^4
+   + 4h(d+2)\|e_k - hg_k\|^2
+   + 4h^2 d(d+2).
+  \label{eq:after-zeta}
+\end{align}
+
+Let $\mathcal{F}_k$ be the sigma-field generated by the past up to time $k$.
+We now take the final desired conditional expectation $\mathbb{E}_k[\,\cdot\,] \coloneqq
+\mathbb{E}[\,\cdot \mid \mathcal{F}_k]$ of~\eqref{eq:after-zeta}.
+Since $\zeta_k \sim \mathcal{N}(0, I_d)$ is independent of $\mathcal{F}_k$ and
+the gradient estimator is unbiased, i.e.\
+$\mathbb{E}[g_k \mid \mathcal{F}_k] = \nabla U(\theta_k)$:
+\begin{equation}
+  \|e_k - hg_k\|^2
+  = \|e_k\|^2 - 2h\langle e_k, g_k \rangle + h^2\|g_k\|^2,
+\end{equation}
+so
+\[
+  \mathbb{E}_k\bigl[\|e_k - hg_k\|^2\bigr]
+  = \|e_k\|^2
+    - 2h\langle e_k, \nabla U(\theta_k) \rangle
+    + h^2\,\mathbb{E}_k\bigl[\|g_k\|^2\bigr].
+\]
+\begin{align}
+    \|e_k - hg_k\|^4 &= \|e_k\|^4 - 4h\|e_k\|^2\langle e_k, g_k \rangle + R_1, \\
+    4h(d+2)\|e_k - hg_k\|^2 &= 4h(d+2)\|e_k\|^2 + R_2,
+\end{align}
+where the remainders $R_1$ and $R_2$ collect all higher-order terms in $h$:
+\begin{align*}
+    R_1 + R_2 &= 2h^2\|e_k\|^2\|g_k\|^2 + 4h^2\langle e_k, g_k \rangle^2 - 4h^3\langle e_k, g_k \rangle\|g_k\|^2 \\
+    &\quad + h^4\|g_k\|^4 - 8h^2(d+2)\langle e_k, g_k \rangle + 4h^3(d+2)\|g_k\|^2.
+\end{align*}
+
+Under Assumption 1, the potential $U$ has a Lipschitz continuous gradient and Hessian. Consequently, the stochastic gradient $g_k$ has conditionally bounded moments such that $\mathbb{E}_k[\|g_k\|^2] \leq C_2(\|e_k\|^2 + 1)$ and $\mathbb{E}_k[\|g_k\|^4] \leq C_4(\|e_k\|^4 + 1)$ for some finite constants $C_2, C_4 > 0$. By applying the Cauchy-Schwarz inequality and Young's inequality ($\|e_k\|^2 \leq \|e_k\|^4 + 1$), the conditional expectation of these remaining terms can be upper bounded for all $h \leq 1$:
+\begin{equation}
+    \mathbb{E}_k[R_1 + R_2] \leq A h^2 \|e_k\|^4 + B h^2,
+\end{equation}
+for some positive constants $A, B > 0$ independent of $h$ and $e_k$. Taking $\mathbb{E}_k$ of \eqref{eq:after-zeta} and substituting our bounded remainder:
+\begin{equation}\label{eq:drift_leading}
+\begin{aligned}
+    \mathbb{E}_k\big[\|e_{k+1}\|^4\big] &\leq \|e_k\|^4 - 4h\|e_k\|^2\langle e_k, \nabla U(\theta_k) \rangle \\
+&\quad + 4h(d+2)\|e_k\|^2 + Ah^2\|e_k\|^4 + Bh^2 + 4h^2d(d+2).
+\end{aligned}
+\end{equation}
+
+By Assumption 1, the potential $U$ is $m$-strongly convex. Since $\nabla U(\theta^*) = 0$, this guarantees the restorative drift:
+\begin{equation}
+    \langle \nabla U(\theta_k), e_k \rangle = \langle \nabla U(\theta_k) - \nabla U(\theta^*), \theta_k - \theta^* \rangle \geq m\|e_k\|^2.
+\end{equation}
+Substituting this into \eqref{eq:drift_leading} provides a negative leading drift of $-4mh\|e_k\|^4$. To handle the noise term $4h(d+2)\|e_k\|^2$ injected by the Brownian motion, we apply Young's inequality ($ab \leq \frac{\epsilon}{2}a^2 + \frac{1}{2\epsilon}b^2$). For any chosen $\epsilon > 0$, we have:
+\begin{equation}
+    4h(d+2)\|e_k\|^2 \leq h \left( \epsilon\|e_k\|^4 + \frac{4(d+2)^2}{\epsilon} \right).
+\end{equation}
+
+And so consolidating the constant terms $B' \coloneqq B + 4d(d+2)$ we have:
+\begin{align}
+    \mathbb{E}_k\big[\|e_{k+1}\|^4\big] &\leq \|e_k\|^4 - 4mh\|e_k\|^4 + \epsilon h\|e_k\|^4 + \frac{4h(d+2)^2}{\epsilon} + Ah^2\|e_k\|^4 + B'h^2 \notag\\
+    &= \Big(1 - (4m - \epsilon)h + Ah^2\Big)\|e_k\|^4 + h\left( \frac{4(d+2)^2}{\epsilon} + B'h \right).
+\end{align}
+
+To show the Foster-Lyapunov drift condition is satisfied we wish to establish a geometric contraction by a factor of $(1 - \lambda h)$. Let $\lambda$ be any arbitrary constant in $(0, 4m)$. We can choose $\epsilon > 0$ sufficiently small such that $4m - \epsilon > \lambda$, which gives a positive gap $\delta \coloneqq 4m - \epsilon - \lambda > 0$. 
+
+By the Archimedean principle, there exists a positive stepsize threshold $h_{\max} \coloneqq \min(1, \delta / A)$ such that for all $h \in (0, h_{\max}]$, we have $Ah \leq \delta$. Multiplying by $h$:
+\begin{equation}
+    Ah^2 \leq \delta h = (4m - \epsilon - \lambda)h.
+\end{equation}
+Substituting this upper bound into our coefficient for the fourth moment:
+\begin{equation}
+    1 - (4m - \epsilon)h + Ah^2 \leq 1 - (4m - \epsilon)h + (4m - \epsilon - \lambda)h = 1 - \lambda h.
+\end{equation}
+
+Let $$C_h \coloneqq \frac{4(d+2)^2}{\epsilon} + B'h_{\max}$$
+we have a valid Foster-Lyapunov drift condition for any contraction rate $\lambda \in (0, 4m)$ and stepsizes $h \leq h_{\max}$:
+\begin{equation}
+    \mathbb{E}_k\big[\|\theta_{k+1} - \theta^*\|^4\big] \leq (1 - \lambda h)\|\theta_k - \theta^*\|^4 + C_h h.
+\end{equation}
+
+Taking the expectation and by Tower property:
+\begin{equation}
+     \mathbb{E}\big[\mathbb{E}_k\big[\|\theta_{k+1} - \theta^*\|^4\big]\big] \leq (1 - \lambda h)\mathbb{E}\|\theta_k - \theta^*\|^4 + \mathbb{E}[C_h h].
+\end{equation}
+Note that LHS$=\mathbb{E}\big[\mathbb{E}\big[\|\theta_{k+1} - \theta^*\|^4 \mid \mathcal{F}_k\big]\big]$ by definition of $\mathbb{E}_k$, and so by Tower property $\text{LHS}=\mathbb{E}\big[\|\theta_{k+1} - \theta^*\|^4 \big]$. So:
+\begin{equation}
+     \mathbb{E}\big[\|\theta_{k+1} - \theta^*\|^4 \big] \leq (1 - \lambda h)\mathbb{E}\|\theta_k - \theta^*\|^4 + \mathbb{E}[C_h h].
+\end{equation}
+Since $\lambda > 0$ and $C_h > 0$, by a discrete Gr\"onwall argument it follows that the sequence of fourth moments is uniformly bounded for all $k \geq 0$:
+\begin{equation}
+    B_4^* \coloneqq \sup_{k \geq 0} \mathbb{E}\big[\|\theta_k - \theta^*\|^4\big] < \infty.
+\end{equation}
+
+return to the variance bound of the SGLD-CV2 estimator from Lemma 1. We apply the triangle inequality once more to separate the iterates from the control variate centering value $\hat\theta$:
+\begin{align}\label{eq:target-4th-bound}
+    \mathbb{E}\|\xi_k\|^2 &\leq \frac{N \sum_{i=1}^N M_i^2}{4n} \mathbb{E}\|\theta_k - \hat\theta\|^4 \notag\\
+    &\leq \frac{2N \sum_{i=1}^N M_i^2}{n} \left( \mathbb{E}\|\theta_k - \bar\theta\|^4 + \|\hat\theta - \bar\theta\|^4 \right)
+    % &\leq \frac{2N \sum_{i=1}^N M_i^2}{n} \left( B_4 + \|\hat\theta - \bar\theta\|^4 \right) \equiv \sigma^2_{\text{CV2}}.
+\end{align}
+
+While the Foster-Lyapunov drift we've just established relies on centering at the MAP estimate $\theta^*$ (where $\nabla U(\theta^*) = 0$), in $\labelcref{eq:target-4th-bound}$, we wish to bound $\mathbb{E}\|\theta_k - \bar\theta\|^4$ which is evaluated relative to the posterior mean $\bar\theta$. For an $m$-strongly log-concave target posterior distribution, the distance between the MAP estimate and the true posterior mean $\|\theta^* - \bar\theta\|$ is deterministically bounded by a constant depending on the geometry of the posterior, thus there is no more work for us to do to bound this term. Applying inequality $\|a - b\|^4 \leq 8\|a - c\|^4 + 8\|b - c\|^4$ to $\mathbb{E}\|\theta_k - \bar\theta\|^4$, we get:
+\begin{equation}
+    \mathbb{E}\big[\|\theta_k - \bar\theta\|^4\big] \leq 8\mathbb{E}\big[\|\theta_k - \theta^*\|^4\big] + 8\|\theta^* - \bar\theta\|^4 \leq 8 B_4^* + 8\|\theta^* - \bar\theta\|^4 \equiv B_4.
+\end{equation}
+
+With the fourth moment of the iterates around the mean uniformly bounded by $B_4$, we return to the variance bound of the SGLD-CV2 estimator from $\labelcref{eq:target-4th-bound}$:
+\begin{align}
+    \mathbb{E}\|\xi_k\|^2 &\leq \frac{2N \sum_{i=1}^N M_i^2}{n} \left( \mathbb{E}\|\theta_k - \bar\theta\|^4 + \|\hat\theta - \bar\theta\|^4 \right) \notag\\
+    &\leq \frac{2N \sum_{i=1}^N M_i^2}{n} \left( B_4 + \|\hat\theta - \bar\theta\|^4 \right) \equiv \sigma^2_{\text{CV2}}.
+\end{align}
+
+Note that $\sigma^2_{\text{CV2}}$ is a uniform global constant. Using $W_2^2(\nu_{k+1}, \pi) \leq \mathbb{E}\|\Delta_{k+1}\|^2$:
+\begin{equation}
+    W_2^2(\nu_{k+1}, \pi) \leq \mathbb{E}\big[\|\Delta_k - hA\| + \|V\|\big]^2 + h^2\mathbb{E}\|\xi_k\|^2.
+\end{equation}
+Applying the deterministic bounds from Lemmas 4 and 5, and substituting our uniform noise bound $\sigma^2_{\text{CV2}}$, we get the final recursive inequality:
+\begin{equation}\label{eq:wass-contraction}
+    W_2^2(\nu_{k+1}, \pi) \leq \Big[ (1 - mh)W_2(\nu_k, \pi) + \alpha M(h^3 d)^{\frac{1}{2}} \Big]^2 + h^2 \sigma^2_{\text{CV2}},
+\end{equation}
+where $\alpha = 7\sqrt{2}/6$. 
+
+Note that noise variance $h^2 \sigma^2_{\text{CV2}}$ is an additive constant independent of $W_2(\nu_k, \pi)$, so our recursion will give a standard contractive sequence.
+% Now using that $W_2^2(\nu_{k+1}, \pi) \leq \mathbb{E}\|\Delta_{k+1}\|^2$ we get the following
+% \begin{align}
+%     W_2^2(\nu_{k+1}, \pi) &\leq \left[ (1 - mh)W_2(\nu_k, \pi) + \alpha M(h^3 d)^{\frac{1}{2}} \right]^2 \notag\\
+%     &\quad + \frac{2h^2 N \sum M_i^2}{n} \mathbb{E}\|\theta_k - Y_0\|^4 \notag\\
+%     &\quad + \frac{16h^2 N \sum M_i^2}{n} \left[ \|\hat\theta - \bar\theta\|^4 + \mathbb{E}\|Y_0 - \bar\theta\|^4 \right],
+% \end{align}
+% where $\alpha = 7\sqrt{2}/6$. Gathering like terms we can further bound $W_2^2(\nu_{k+1}, \pi)$ to get a recursive 
+\end{proof}
+% \jay{we might want to use \texttt{\textbackslash Cref\{lemma:somelabel\}}}
+
+\textbf{Theorem 2.} \legacytheoremlabel{2}{thm:sgld_cv2_convergence} \textit{Under Assumptions~\ref{ass:convex} and ~\ref{ass:grad}, let $\theta_K$ be the state of SGLD-CV2 at the $K^{th}$ iteration of the algorithm with stepsize $h$, initial value $\theta_0$, and control-variate centering value $\hat\theta$. Let the distribution of $\theta_K$ be $\nu_K$. Define $B_4 \coloneqq \sup_{k \geq 0} \mathbb{E}\big[\|\theta_k - \theta^*\|^4\big] + 8\|\theta^* - \bar\theta\|^4< \infty$. Define $R \coloneqq M/m$ as the condition number of the potential $U$. Then for any tolerance $\epsilon_0 > 0$ and any choice of error decomposition constants $c_1, c_2, c_3 > 0$ such that $c_1 + c_2 + c_3 = 1$, if the following conditions hold:}
+\begin{align}
+    h &\leq \frac{c_2^2 \epsilon_0^2}{R^2 \alpha^2 d m}, \label{eq:cond_h} \\
+    K h &\geq \frac{1}{2m} \log\left[ \frac{m}{c_1^2 \epsilon_0^2} \left( \mathbb{E}\|\theta_0 - \bar\theta\|^2 + \frac{d}{m} \right) \right], \label{eq:cond_K} \\
+    n &\geq \frac{2 N \sum_{i=1}^N M_i^2}{c_3^2 \epsilon_0^2 m} \left[ \|\hat\theta - \bar\theta\|^4 + B_4 \right], \label{eq:cond_n}
+\end{align}
+\textit{where $\alpha = 7\sqrt{2}/6$, and $d$ is the dimension of $\theta_k$, then the Wasserstein-2 distance to the target distribution satisfies $W_2(\nu_K, \pi) \leq \epsilon_0 / \sqrt{m}$.}
+
+\begin{proof}
+    Taking the square root of both sides of the Wasserstein contraction bound established for a single step of SGLD-CV2 from $\labelcref{eq:wass-contraction}$, and using that $\sqrt{x^2 + y^2} \leq x + y$ for $x,y$ positive (subadditivity of the square root function for positive numbers), we simplify the bound to:
+\begin{equation}
+    W_2(\nu_{k+1}, \pi) \leq (1-mh)W_2(\nu_k,\pi) + \alpha M h^{3/2} d^{1/2} + h\sigma_{\text{CV2}}.
+\end{equation}
+
+This recursive inequality over $K$ iterations gives:
+\begin{align}
+    W_2(\nu_K, \pi) &\leq (1-mh)^K W_2(\nu_0, \pi) + \sum_{j=0}^{K-1} (1-mh)^j \Big( \alpha M h^{3/2} d^{1/2} + h\sigma_{\text{CV2}} \Big) \notag \\
+    &\leq (1-mh)^K W_2(\nu_0, \pi) + \frac{\alpha M h^{3/2} d^{1/2} + h\sigma_{\text{CV2}}}{1 - (1-mh)} \notag \\
+    &= (1-mh)^K W_2(\nu_0, \pi) + \alpha \frac{M}{m} \sqrt{hd} + \frac{\sigma_{\text{CV2}}}{m}. \label{eq:unrolled_w2}
+\end{align}
+
+Suppose we stop the algorithm at iteration $K$ and require the total distance to be bounded by $W_2(\nu_K, \pi) \leq \epsilon_0 / \sqrt{m}$. Using \eqref{eq:unrolled_w2}, we can decompose this total error tolerance among the three terms using coefficients $c_1, c_2, c_3 > 0$ where $c_1 + c_2 + c_3 = 1$. A sufficient condition is to bound each error term respectively:
+\begin{align}
+    (1-mh)^K W_2(\nu_0, \pi) &\leq c_1 \frac{\epsilon_0}{\sqrt{m}}, \label{eq:bound_init} \\
+    \alpha \frac{M}{m} \sqrt{hd} &\leq c_2 \frac{\epsilon_0}{\sqrt{m}}, \label{eq:bound_disc} \\
+    \frac{\sigma_{\text{CV2}}}{m} &\leq c_3 \frac{\epsilon_0}{\sqrt{m}}. \label{eq:bound_noise}
+\end{align}
+
+First, we solve for the stepsize $h$ using the continuous-time discretization error bound \eqref{eq:bound_disc}. Recall that $R = M/m$:
+\begin{equation}
+    \alpha R \sqrt{hd} \leq c_2 \frac{\epsilon_0}{\sqrt{m}} \implies \alpha^2 R^2 hd \leq \frac{c_2^2 \epsilon_0^2}{m} \implies h \leq \frac{c_2^2 \epsilon_0^2}{R^2 \alpha^2 d m}.
+\end{equation}
+This is thus condition \eqref{eq:cond_h}.
+
+Next, we solve for the required iterations $K$ using the initialization error bound \eqref{eq:bound_init}. Using the inequality $(1-mh)^K \leq \exp(-Kmh)$, we require:
+\begin{equation}
+    \exp(-Kmh) W_2(\nu_0, \pi) \leq c_1 \frac{\epsilon_0}{\sqrt{m}} \implies Kmh \geq \log\left( \frac{\sqrt{m} W_2(\nu_0, \pi)}{c_1 \epsilon_0} \right).
+\end{equation}
+Multiplying the argument of the logarithm by a factor of 2 (which squares the inside), we get:
+\begin{equation}
+    Kh \geq \frac{1}{2m} \log\left( \frac{m W_2^2(\nu_0, \pi)}{c_1^2 \epsilon_0^2} \right).
+\end{equation}
+Since the starting point $\theta_0$ is deterministic, we invoke Theorem 1 \cite{durmus2016highdimensional} which states $W_2^2(\nu_0, \pi) \leq \mathbb{E}\|\theta_0 - \bar\theta\|^2 + d/m$. Substituting this gives us condition \eqref{eq:cond_K}:
+\begin{equation}
+    Kh \geq \frac{1}{2m} \log\left[ \frac{m}{c_1^2 \epsilon_0^2} \left( \mathbb{E}\|\theta_0 - \bar\theta\|^2 + \frac{d}{m} \right) \right].
+\end{equation}
+
+Finally, we solve for the required batch size $n$ using \eqref{eq:bound_noise}:
+\begin{equation}
+    \frac{\sigma_{\text{CV2}}^2}{m^2} \leq \frac{c_3^2 \epsilon_0^2}{m} \implies \sigma_{\text{CV2}}^2 \leq c_3^2 m \epsilon_0^2.
+\end{equation}
+Substitute the definition of $\sigma^2_{\text{CV2}} = \frac{2N\sum M_i^2}{n}\big(\|\hat\theta - \bar\theta\|^4 + B_4\big)$:
+\begin{equation}
+    \frac{2N\sum_{i=1}^N M_i^2}{n}\Big(\|\hat\theta - \bar\theta\|^4 + B_4\Big) \leq c_3^2 m \epsilon_0^2.
+\end{equation}
+Rearranging for $n$ gives us condition \eqref{eq:cond_n}:
+\begin{equation}
+    n \geq \frac{2 N \sum_{i=1}^N M_i^2}{c_3^2 \epsilon_0^2 m} \Big( \|\hat\theta - \bar\theta\|^4 + B_4 \Big).
+\end{equation}
+Since all three sufficient conditions are met, $W_2(\nu_K, \pi) \leq \epsilon_0 / \sqrt{m}$ holds.
+\end{proof}
+
+\textbf{Remark.} If we allocate the error tolerance equally across all three sources of error symmetrically $c_1 = c_2 = c_3 = 1/3$, the multipliers evaluate to $c_2^2 = 1/9$, $1/c_1^2 = 9$, and $2/c_3^2 = 18$. Substituting we get the bounds:
+\begin{align}
+    h &\leq \frac{\epsilon_0^2}{9 R^2 \alpha^2 d m}, \\
+    Kh &\geq \frac{1}{2m} \log\left[ \frac{9m}{\epsilon_0^2} \left( \mathbb{E}\|\theta_0 - \bar\theta\|^2 + \frac{d}{m} \right) \right], \\
+    n &\geq \frac{18 N \sum_{i=1}^N M_i^2}{\epsilon_0^2 m} \left[ \|\hat\theta - \bar\theta\|^4 + B_4 \right].
+\end{align}
+
+\textbf{Corollary 1.} \textit{Assume that Assumptions~\ref{ass:convex} and ~\ref{ass:grad} and the conditions of Theorem 2 hold. Fix $\epsilon_0 > 0$ and let constants $c_1 = c_2 = c_3 = 1/3$. Define the cost constants:}
+\begin{equation}
+    C_1 = \frac{9 R^2 \alpha^2 d}{\epsilon_0^2}, \quad \text{and} \quad C_2 = \frac{18}{\epsilon_0^2}.
+\end{equation}
+\textit{We can implement an SGLD-CV2 algorithm achieving $W_2(\nu_K, \pi) \leq \epsilon_0/\sqrt{m}$ such that the computational cost $Kn$ is bounded by:}
+\begin{equation}
+    Kn \leq \left[ \frac{C_1}{2} \log\left( \frac{9m}{\epsilon_0^2}\left(\mathbb{E}\|\theta_0 - \bar\theta\|^2 + \frac{d}{m}\right) \right) \right] \left[ C_2 \frac{N \sum_{i=1}^N M_i^2}{m} \Big( \|\hat\theta - \bar\theta\|^4 + B_4 \Big) \right].
+\end{equation}
+
+\begin{proof}
+To bound the total computational cost $Kn$, we assume the algorithm is run with the maximum allowed stepsize $h$ that satisfies condition \eqref{eq:cond_h} under symmetric allocations ($c_i=1/3$). By defining $C_1 = 9 R^2 \alpha^2 d / \epsilon_0^2$, we can write the maximum stepsize as:
+\begin{equation}
+    h_{\max} = \frac{1}{m C_1}.
+\end{equation}
+Substituting $h = h_{\max}$ and $c_1=1/3$ into the iteration required bound from condition \eqref{eq:cond_K}:
+\begin{equation}
+    K \geq \frac{1}{h_{\max}} \frac{1}{2m} \log\left[ \frac{9m}{\epsilon_0^2} \left( \mathbb{E}\|\theta_0 - \bar\theta\|^2 + \frac{d}{m} \right) \right] = \frac{C_1}{2} \log\left[ \frac{9m}{\epsilon_0^2} \left( \mathbb{E}\|\theta_0 - \bar\theta\|^2 + \frac{d}{m} \right) \right].
+\end{equation}
+Next, we rewrite the batch size bound from condition \eqref{eq:cond_n} using $c_3=1/3$ and the definition $C_2 = 18 / \epsilon_0^2$:
+\begin{equation}
+    n \geq C_2 \frac{N \sum_{i=1}^N M_i^2}{m} \Big( \|\hat\theta - \bar\theta\|^4 + B_4 \Big).
+\end{equation}
+The total computational cost to achieve the desired accuracy is bounded by multiplying the minimum required iterations $K$ by the minimum required batch size $n$. So:
+\begin{equation}
+    Kn \leq \left[ \frac{C_1}{2} \log\left( \frac{9m}{\epsilon_0^2}\left(\mathbb{E}\|\theta_0 - \bar\theta\|^2 + \frac{d}{m}\right) \right) \right] \left[ C_2 \frac{N \sum_{i=1}^N M_i^2}{m} \Big( \|\hat\theta - \bar\theta\|^4 + B_4 \Big) \right].
+\end{equation}
+\end{proof}
+
+\textbf{Remark on Asymptotic Efficiency:} Corollary 1 implies a theoretical advantage of the second-order control variate in asymptotics over the first-order. The constants $C_1$ and $C_2$ depend on $\epsilon_0$ and the condition number $R = M/m$. As stated in Corollary 1 \cite{baker2017} $R$ is a constant as $N$ increases. Furthermore, under Assumption~\ref{ass:hess-unif} the sum of the squared Hessian bounds $\sum_{i=1}^N M_i^2$ increases linearly with $N$, making the factor $\frac{N \sum M_i^2}{m}$ scale as $\mathcal{O}(N)$. By the Bernstein-von Mises theorem (or Theorem 1 \cite{durmus2016highdimensional}), the variance of the posterior scales as $1/N$ as N increases, meaning the central fourth moment $B_4$ scales as $\mathcal{O}(N^{-2})$. This means that if in our preprocessing step we can find a mode $\hat\theta$ with SGD algorithm that is $\mathcal{O}(N^{-\frac{1}{2}})$ of the posterior mean $\bar\theta$, then $\left[ C_2 \frac{N \sum_{i=1}^N M_i^2}{m} \Big( \|\hat\theta - \bar\theta\|^4 + B_4 \Big) \right]$ will scales as $\mathcal{O}(N^{-1})$. From Corollary 1 \cite{baker2017}, the computational cost of SGLD-CV is the product of $2$ terms, in which the first term scales approximately the same as our first term, while the second term scales as $\mathcal{O}(m\|\hat\theta - \bar\theta\|^2)$ (where $m$ increases linearly with $N$ by Assumption~\ref{ass:convex}). Then the same mode we were discussing would give SGLD-CV a computational cost of $\mathcal{O}(1)$, while giving SLGD-CV2 a computational cost of $\mathcal{O}(1/N)$.
+
+Because the algorithm requires $n \geq 1$, this indicates that as $N \to \infty$, the gradient noise of SGLD-CV2 decays so quickly that an $\mathcal{O}(1)$ mini-batch size is more than sufficient.
+
+\subsection*{Setup Costs}
+Like in Baker, we restate a result on the convergence of Stochastic Gradient Descent under the strongly convex conditions of Assumption~\ref{ass:convex} that would give us the cost of the preprocessing step to find a desired mode as discussed above. Adapted from Nemirovski et al. (2009):
+
+\textbf{Lemma 3.} \textit{Under Assumption~\ref{ass:convex}, let $\hat\theta$ denote the final state of SGD with stepsizes $h_k = 1/(mk)$ after $K_{\text{setup}}$ iterations. Suppose $\mathbb{E}\|\nabla U(\theta)\|^2 \leq D^2$ and denote the true MAP estimate (the global minimum of $U$) by $\theta^*$. Then it holds that:}
+\begin{equation}
+    \mathbb{E}\|\hat\theta - \theta^*\|^2 \leq \frac{4D^2}{m^2 K_{\text{setup}}}.
+\end{equation}
+
+Again as stated in Lemma 3 \cite{baker2017}, if we assume that the norm of the individual gradients $\|\nabla U_i(\theta)\|$ is bounded by some constant $\sigma$ for all $i \in \{1, \ldots, N\}$, then $D^2$ will be $\mathcal{O}(N^2)$. Because $m$ scales as $\mathcal{O}(N)$, the ratio $\frac{D^2}{m^2}$ reduces to $\mathcal{O}(1)$. To ensure that our squared error $\mathbb{E}\|\hat\theta - \theta^*\|^2$ scales as $\mathcal{O}(N^{-1})$—which implies the necessary $\mathcal{O}(N^{-2})$ fourth-moment scaling for our algorithm—we need $K_{\text{setup}}$ to be $\mathcal{O}(N)$. This means that in our preprocessing step we need to process the full dataset for SGD to converge to the desired mode $\hat\theta$ as such.
+
+It follows that, just as in the first-order case, there are two one-off $\mathcal{O}(N)$ setup costs: one to run SGD to find an acceptable mode $\hat\theta$ within $\mathcal{O}(N^{-1/2})$ of the true mode, and one to evaluate the full dataset once to compute the exact log-posterior gradient $\nabla U(\hat\theta)$ to initialize the control variate.

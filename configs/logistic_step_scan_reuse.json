@@ -1,0 +1,15 @@
+{
+  "sgld": {
+    "1.0": "results/logistic_tuned_long_chain_diagnostic/summary.json",
+    "0.5": "results/logistic_sgld_half_step_diagnostic/summary.json",
+    "0.25": "results/logistic_sgld_quarter_step_diagnostic/summary.json"
+  },
+  "cv1": {"1.0": "results/logistic_tuned_long_chain_diagnostic/summary.json"},
+  "cv2": {"1.0": "results/logistic_tuned_long_chain_diagnostic/summary.json"},
+  "psgld": {
+    "1.0": "results/logistic_adaptive_long_chain_diagnostic/summary.json",
+    "0.5": "results/logistic_psgld_half_step_diagnostic/summary.json"
+  },
+  "pcv1": {"1.0": "results/logistic_adaptive_long_chain_diagnostic/summary.json"},
+  "pcv2": {"1.0": "results/logistic_adaptive_long_chain_diagnostic/summary.json"}
+}

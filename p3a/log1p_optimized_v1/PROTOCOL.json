@@ -1,0 +1,164 @@
+{
+  "name": "Log1p Bank bounded optimized accuracy-cost comparison v1",
+  "classification": "Exploratory expanded search after previous fixed-configuration outcomes; independent validation within new frozen search",
+  "backend": "JAX CPU float64",
+  "methods": [
+    "cv1",
+    "cv2"
+  ],
+  "geometry": "Same full posterior-Hessian inverse, prior-scaled1e-10 ridge; CV2 correction uses unregularized likelihood Hessian",
+  "LP": 0.9999999999999891,
+  "base_coefficients": [
+    0.0015625,
+    0.00625,
+    0.025,
+    0.1,
+    0.4,
+    1.6
+  ],
+  "base_h": [
+    0.001562500000000017,
+    0.006250000000000068,
+    0.025000000000000272,
+    0.10000000000000109,
+    0.40000000000000435,
+    1.6000000000000174
+  ],
+  "batch_sizes": [
+    1,
+    4,
+    16,
+    32,
+    64,
+    256
+  ],
+  "pilot": {
+    "seeds": [
+      205100,
+      205101
+    ],
+    "replicas": 64,
+    "max_iterations": 2048,
+    "checkpoints": [
+      128,
+      256,
+      384,
+      512,
+      1024,
+      2048
+    ],
+    "max_extra_h_per_method_batch": 2,
+    "refinement": "Per(method,n): if no full-horizon stable base h, add h_min/4 and h_min/16. Otherwise first add geometric midpoint at highest stable-to-failed adjacent boundary if any; if largest h stable add2*h_max. Fill remaining slots with geometric midpoints of adjacent base h, ranked by number of endpoints contributing within-batch nondominated warm/cold/SW2/variance points, then lower h. Maximum2 extra h each, same rule for both methods. No more rounds."
+  },
+  "selection": {
+    "max_candidates_per_method_batch": 2,
+    "max_candidates_per_method": 12,
+    "rule": "Across stable pilot configs: rank all checkpoint points by 4D non-domination (warm,cold,SW2,variance). Per batch choose configs covering most global first-front points; ties best global front rank, within-batch first-front count, higher inverse-rank checkpoint coverage, then h. Preserve at least one stable config per batch; max2. Candidates frozen before validation."
+  },
+  "validation": {
+    "seeds": [
+      205200,
+      205201,
+      205202,
+      205203,
+      205204,
+      205205,
+      205206,
+      205207
+    ],
+    "replicas": 512,
+    "base_max_iterations": 2048,
+    "max_extended_iterations": 4096,
+    "checkpoints": [
+      128,
+      256,
+      384,
+      512,
+      1024,
+      2048,
+      4096
+    ],
+    "extension_trigger": "Uniform4096 for all selected CV1/CV2 configs if any selected stable pilot config has worse-reference mean variance_NRMSE at2048>.20 and falls at least10% from1024. Otherwise2048. No further extension or selection after validation."
+  },
+  "metrics": "Existing endpoint standardized slicedW2 and relative per-replica ergodic variance NRMSE; per-reference mean over seeds then worse reference. Fixed approved scoring clouds/projections.",
+  "failure_rule": "Any failed replica or incomplete run in any seed invalidates complete n,h config at every checkpoint over its phase-specific tested horizon. Never delete failures or score survivors. Original radius limit100sqrt(d).",
+  "reference": "Reuse approved log1p two-pool reference, all individual and pair frozen gates verified before start; no new target/ref construction.",
+  "cost": "Warm=stored locally measured mode fit attribution + actual current prepare/state setup + synchronized sampler/RNG. Cold adds actual shape-specific compile attribution, excludes warmup. Reference,scoring,functionals,storage excluded from ranking and separately logged. Cold not fresh-process timing. H construction and metric factorization aggregate setup, shared full-H need.",
+  "bootstrap": {
+    "seed": 205900,
+    "draws": 10000,
+    "resampling": "Paired whole seeds across all candidates and checkpoints, both methods and refs",
+    "pointwise": "Percentile95% metrics/time/frontier differences, recompute minima and non-dominated frontier per draw",
+    "simultaneous": "95% max-absolute-standardized bootstrap deviation band across all eligible config/checkpoint/reference accuracy means; conservative upper bounds require both metrics and both refs. Conditional on fixed references; finite8-seed bootstrap is approximate."
+  },
+  "threshold_sweep": {
+    "sw2": 0.3,
+    "variance": [
+      0.2,
+      0.21,
+      0.22,
+      0.23,
+      0.24,
+      0.25,
+      0.26,
+      0.27,
+      0.28,
+      0.29,
+      0.3,
+      0.31,
+      0.32,
+      0.33,
+      0.34,
+      0.35,
+      0.36,
+      0.37,
+      0.38,
+      0.39,
+      0.4,
+      0.41,
+      0.42,
+      0.43,
+      0.44,
+      0.45,
+      0.46,
+      0.47,
+      0.48,
+      0.49,
+      0.5,
+      0.51,
+      0.52,
+      0.53,
+      0.54,
+      0.55,
+      0.56,
+      0.57,
+      0.58,
+      0.59,
+      0.6
+    ],
+    "statuses": "Point-estimate and simultaneous-upper-supported attainment separately. Min over frozen validated candidate grid only, not all continuous n,h or unvalidated pilot grid. Keep Not Reached mass; no finite speedup if either point method unattained."
+  },
+  "selection_bias": "Validation-grid minima and frontiers descriptive and may be optimistic; simultaneous accuracy bounds offer stronger but approximate attainment support, not global cost optimality. Bootstrap selection frequencies retained; no cherry-picked main threshold.",
+  "seeds": {
+    "warmup": 205001,
+    "schedule": 205003
+  },
+  "budget_seconds": 10800,
+  "automatic": "Preflight -> base pilot -> one bounded refinement -> freeze candidates/horizon -> independent validation -> reconstruct/check metrics -> simultaneous/pointwise frontier analysis -> plots/report/raw archive/checksums. No user decisions. No P3B.",
+  "persistence": "Local atomic files, idle-sleep prevention; no active Drive sync",
+  "input_hashes": {
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/target.npz": "9a4f12dc4ea20017af8e99df6859ca63a82e37b9413352d1770edb71442ff4fa",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/scoring.npz": "9481e6b9b62379d27b022426eda6bddbbfd32ed3ebc466ad960f4b7df39be360",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/metadata.json": "d736df2962e50335f083b1432dfcfe21329fccecf47ecc74ffa42198641666ce",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/reference_pair.json": "50dd315b25956130533dc0ff8c63a854d90678f31677a824f32b4bd368280bd9",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/reference_0.json": "5202d3755a457dc7a043d500ce0c7f7549748f64725fdd2b71d55b2ec0ad8950",
+    "exports/p3a_feature_sensitivity_v1/log1p_previous/reference_1.json": "aa0885c4afe6cb293f86b6aa72578924c1d9c2a9273d6ab7375628572a171080",
+    "gpu_replication/batched_sampler.py": "64ea7103d380eeb5a8758d5c915dee261f1ddbd0ea96e31449ad514560131edb",
+    "p2_screening/kernels.py": "1d7038f95cc4936f30f366f30372f48d867d4d69efc9db46cc7387d2cce603b5",
+    "p2_screening/run.py": "01d43fbb86881fab4b7dc0e3417a9a69c92981148577666d6b334027bf9b2506",
+    "src/sgld_cv/estimators.py": "8001a2a989dc241724a21357c7d2d36c9fa2f5262010e3fa522d0ff972d3bca3",
+    "src/sgld_cv/models.py": "2244a33465328d90c434dd0916c5b610e9cf36d00e00ca2c157e4b71ab0811f5"
+  },
+  "per_run_sampler_seconds": 240,
+  "artifact_scope": "Archive includes frozen target/scoring/quality assets, full run JSON/NPZ, protocol, source, analysis and plots."
+}

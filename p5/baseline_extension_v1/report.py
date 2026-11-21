@@ -1,0 +1,5 @@
+from common import *
+c=load(H/'PROTOCOL.json');status=load(D/'STATUS.json');md=['# P5 focused baseline extension','','This review-motivated extension preserves original P1–P4. Full-H fixed geometry isolates estimator comparisons; adaptive methods are outside the primary scope, not rejected as universally unreliable.','','## ULA comparisons','']
+for t in c['targets']:
+ p=E/t['id']/'REPORT.md';md+=['### '+t['id'],'',p.read_text() if p.exists() else 'Incomplete or not started. No efficiency conclusion imputed.','']
+md+=['## Li initialization audit','',(E/'LI_INITIALIZATION_AUDIT.md').read_text() if (E/'LI_INITIALIZATION_AUDIT.md').exists() else 'Separate source audit retained.','','## Limits','','Only selected targets and bounded grids are compared. New paired inference uses fresh seeds; it does not retroactively change original classifications or certify asymptotic computational claims. Metric ablation is separate, with independently scaled steps and true diagonal preparation/application costs. No optional MALA is treated as a finite-run unbiased posterior draw.'];(E/'REPORT.md').write_text('\n'.join(md)+'\n')

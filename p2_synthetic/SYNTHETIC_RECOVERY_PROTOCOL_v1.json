@@ -1,0 +1,19 @@
+{
+  "stage": "bounded recovery of two pre-sampling synthetic failures",
+  "targets": [
+    "synthetic_correlated_signal1",
+    "synthetic_scaled_signal1"
+  ],
+  "reason": "original Newton-CG returned precision-loss status at gradients 1.4967328648358682e-8 and 4.526522370672462e-8; no samplers were run",
+  "amendment": "same objective/data/prior, original Newton-CG then at most 12 analytic Newton corrections; accept only full-gradient norm <=1e-8 and positive Hessian; no reference-quality relaxation",
+  "pilot": "original 36 jobs per target, R64 n32 K128/512/2048 and original pilot seeds187000/187001; same reference seeds derived from original full target list; all original failure rules/grid retained",
+  "budgets": {
+    "targets": 2,
+    "per_target_seconds": 1200,
+    "stage_seconds": 3600
+  },
+  "preservation": "original source hashes/results unchanged; new output and Drive directory; existing benign/strong-signal pilots reused; Bank closed",
+  "next": "audit all four synthetic pilots, freeze per-regime selection before consuming reserved selection seeds; heldout remains untouched for synthetic targets",
+  "runtime": "GPU_Syn A10040GB float64",
+  "runner_sha256": "52b367f078f58222a1cf26485e83cc0521c5ede3eef9afc4bed1d65997d4f742"
+}

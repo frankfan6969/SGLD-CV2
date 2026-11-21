@@ -1,0 +1,16 @@
+\begin{table}[tb]
+\centering\small
+\caption{Historical YearPredictionMSD geometry study. Accuracy and time columns are seed medians; diagnostic columns give the worst $\widehat R$ and smallest bulk ESS over eight seeds. Passing requires $\widehat R<1.01$ and bulk ESS$\geq400$. SW$_2$ uses 512 spaced chain draws versus 1024 independent exact draws in frozen calibration-whitened coordinates; covariance normalization is defined in the text. Budgets and legacy step parameters differ across arms.}\label{tab:year_geometry}
+\begin{tabular}{lrrrrrr}
+\toprule
+Arm & SW$_2$ & Cov. error & Time (s) & Max $\widehat R$ & Min ESS & Pass \\
+\midrule
+Identity, CV1 & 1.1039 & 1.1688 & 0.85 & 4.3087 & 4 & 0/8 \\
+Identity, CV2 & 1.1048 & 1.1672 & 1.18 & 4.3079 & 4 & 0/8 \\
+Full-H, CV1 ($s=.1$) & 0.1214 & 0.0248 & 6.91 & 1.0060 & 1636 & 8/8 \\
+Full-H, CV2 ($s=.3$) & 0.1075 & 0.0229 & 2.05 & 1.0096 & 925 & 8/8 \\
+Full-H, CV2 ($s=.6$) & 0.1353 & 0.0246 & 2.09 & 1.0043 & 2199 & 8/8 \\
+Direct Gaussian & 0.0958 & 0.0079 & 0.13 & --- & iid & --- \\
+\bottomrule
+\end{tabular}
+\end{table}

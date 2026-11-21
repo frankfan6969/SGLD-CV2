@@ -1,0 +1,64 @@
+{
+  "stage": "P3A Bank T4 batch-step pilot freeze v1",
+  "target": "unchanged Bank Marketing N45211 d43 N(0,I) prior; original frozen mode/full-H/reference/scoring",
+  "gate": "P2 Bank CV1-ULA gap substantial; user explicitly authorizes full P3A on T4; German comparison deferred per current user target assignment",
+  "batches": [
+    1,
+    4,
+    16,
+    32,
+    64,
+    256
+  ],
+  "steps": [
+    0.00625,
+    0.0125,
+    0.025,
+    0.05,
+    0.1
+  ],
+  "methods": [
+    "CV1",
+    "CV2",
+    "ULA",
+    "selected SGLD"
+  ],
+  "geometry": "full-H for all; identical h grid for CV1/CV2, h=c/LP and actual LP checked; SGLD selected n32 h.00625",
+  "pilot_seeds": [
+    202600,
+    202601
+  ],
+  "selection_seeds_reserved": [
+    202700,
+    202701,
+    202702,
+    202703
+  ],
+  "heldout_seeds_reserved": [
+    202800,
+    202801,
+    202802,
+    202803,
+    202804,
+    202805,
+    202806,
+    202807
+  ],
+  "replicas": 32,
+  "checkpoints": [
+    128,
+    512,
+    2048
+  ],
+  "runs": 132,
+  "precision": "float64 T4; independent replica/iteration/purpose streams; unchanged uniform without-replacement Floyd kernel",
+  "metrics": "original replica SW2 and posterior variance relative NRMSE on both saved reference clouds; mean/median raw gradient MSE and whitened MSE at24 common posterior locations x32paired batches; finite-population factor recorded",
+  "failure": "nonfinite or radius>100sqrt(d), permanent failed lane; any failed replica invalidates complete ensemble from failure; any failed/censored seed invalidates full paired configuration; no successful-replica-only scoring",
+  "cost": "T4-only setup-inclusive wall-clock; anchor attribution+actual setup+synchronized sampler; cold adds measured compile, warm omits compile; unscored first-use initialization separate; functional/scoring/reference/backup separate. Compilation cache effects retained and documented; no absolute time comparison with A100",
+  "stage_seconds": 5400,
+  "per_run_sampler_seconds": 180,
+  "reference": "reuse passed frozen Bank reference; no new HMC and no relaxed gates",
+  "accuracy_sensitivity": "descriptive .5/.4/.3/.2 relative variance targets, marginal and original SW2<=.3 joint; no claim these have theoretical certification",
+  "next": "report full candidate/failure grid; independent selection then heldout freeze; no postpilot grid extension unless separately documented",
+  "runner_sha256": "ed5eba81f8631038b0fe6f630a26822ce2f831a6d70cb859df53ac5a0a75fd0e"
+}

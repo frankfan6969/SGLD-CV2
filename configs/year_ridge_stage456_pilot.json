@@ -1,0 +1,61 @@
+{
+  "purpose": "pilot",
+  "metric": {
+    "batches": 32,
+    "seed": 8100,
+    "alpha": 0.99,
+    "epsilon": 1e-05
+  },
+  "tuning": {
+    "seeds": [
+      100
+    ],
+    "batch_sizes": [
+      32,
+      128
+    ],
+    "step_fractions": [
+      0.05,
+      0.2
+    ],
+    "steps": 20,
+    "replicas": 8
+  },
+  "evaluation": {
+    "seeds": [
+      300
+    ],
+    "steps": 50,
+    "replicas": 16,
+    "reference_size": 16
+  },
+  "chains": {
+    "count": 4,
+    "warmup": 30,
+    "draws": 80
+  },
+  "audit": {
+    "states": 3,
+    "batches": 8,
+    "radii": [
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ]
+  },
+  "reference": {
+    "chains": 4,
+    "warmup": 300,
+    "draws": 600,
+    "seed": 7000,
+    "step_size": 0.3,
+    "leapfrog_steps": 12
+  },
+  "problem": {
+    "kind": "year_ridge",
+    "directory": "data/year_train",
+    "prior_precision": 1.0,
+    "noise_variance": 100.0
+  }
+}

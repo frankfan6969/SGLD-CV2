@@ -1,0 +1,136 @@
+{
+  "stage": "P2 synthetic independent held-out freeze v1",
+  "targets": [
+    "synthetic_correlated_signal1",
+    "synthetic_scaled_signal1",
+    "synthetic_correlated_signal3",
+    "synthetic_benign_signal1"
+  ],
+  "methods": [
+    "cv1",
+    "cv2",
+    "ula"
+  ],
+  "h_rule": "original full-H c/LP grid; actual LP verified within1e-7 of1 before each run",
+  "geometry": "full-H; identity/diagonal/Li remain complete screening controls, not optimized final controls",
+  "replicas": 512,
+  "checkpoints": [
+    128,
+    512,
+    2048,
+    8192
+  ],
+  "batch_size": 32,
+  "reference": "reuse exact target/ref/scoring/projection files and passed frozen gates for all four regimes; no reference recomputation",
+  "initialization": "all replicas independently from same mode; separate replica/purpose/iteration streams; paired streams across methods/configurations",
+  "failure": "any failed replica invalidates complete seed ensemble from first failure; any failed seed makes configuration ineligible at2048; no deletion/replacement",
+  "cost": "anchor+actual setup+synchronized sampler; cold additionally attributed first compile; warm removes compile. Shared unscored initialization of all three methods at actual shapes before measured setup is separate research cost, preventing first-process allocation bias; scoring/functionals/reference/Drive excluded. Pilot historical timings preserved unchanged.",
+  "initialization_seed": 199999,
+  "schedule_seed": 199001,
+  "stage_seconds": 720,
+  "heldout": "Eight new seeds within each synthetic target. Same numeric seeds in Bank are disclosed; separate datasets and no within-target heldout reuse. All arms paired across same seeds. No new tuning, automatic repetition or omission of8192.",
+  "scope": "Frozen-step iteration-budget frontiers; descriptive joint threshold attained on both reference means, consistent with Bank thresholds; not optimized all-step-size frontier; R512 finite-cloud SW2 not directly comparable to pilotR64 or selectionR128.",
+  "runner_sha256": "38d6da6dfb831d9b8d5a312daca0e92ce2c794d9946e9c97d5013dced609f8b7",
+  "arms": [
+    {
+      "target": "synthetic_correlated_signal1",
+      "method": "cv1",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_correlated_signal1",
+      "method": "cv2",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_correlated_signal1",
+      "method": "ula",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 30000
+    },
+    {
+      "target": "synthetic_scaled_signal1",
+      "method": "cv1",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_scaled_signal1",
+      "method": "cv2",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_scaled_signal1",
+      "method": "ula",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 30000
+    },
+    {
+      "target": "synthetic_correlated_signal3",
+      "method": "cv1",
+      "h": 0.05,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_correlated_signal3",
+      "method": "cv2",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_correlated_signal3",
+      "method": "ula",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 30000
+    },
+    {
+      "target": "synthetic_benign_signal1",
+      "method": "cv1",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_benign_signal1",
+      "method": "cv2",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_benign_signal1",
+      "method": "ula",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 30000
+    }
+  ],
+  "heldout_seeds": [
+    189000,
+    189001,
+    189002,
+    189003,
+    189004,
+    189005,
+    189006,
+    189007
+  ],
+  "bootstrap_seed": 199002,
+  "accuracy_targets": {
+    "SW2": 0.3,
+    "variance_NRMSE": 0.5
+  },
+  "inference": "Primary variance NRMSE CV2-CV1 K2048, primary reference, four regimes; 19999 paired seed bootstrap resamples, Bonferroni four-contrast intervals at98.75%. Other metrics/references/budgets/ULA/timing exploratory95%; conditional on fixed references and measured compilation; approximate eight-seed bootstrap, no population-W2 certification."
+}

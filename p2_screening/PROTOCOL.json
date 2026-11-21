@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "stage": "P2 bounded target screening, not final held-out evaluation",
+  "hardware": "Existing CV2_GPU A100 runtime, JAX float64",
+  "targets": [
+    {"id":"bank_logistic","kind":"bank"},
+    {"id":"synthetic_correlated_signal1","kind":"synthetic","N":30000,"d":20,"kappa":10000,"geometry":"correlated","signal":1},
+    {"id":"synthetic_scaled_signal1","kind":"synthetic","N":30000,"d":20,"kappa":10000,"geometry":"scaled","signal":1},
+    {"id":"synthetic_correlated_signal3","kind":"synthetic","N":30000,"d":20,"kappa":10000,"geometry":"correlated","signal":3},
+    {"id":"synthetic_benign_signal1","kind":"synthetic","N":30000,"d":20,"kappa":10,"geometry":"correlated","signal":1}
+  ],
+  "prior": "N(0,I) in each configured coordinate system; no claim these are linear reparameterizations of one posterior",
+  "synthetic_scope": "Paired base design and label uniforms. Feature covariance condition number is a design input; posterior Hessian condition number is measured. Signal changes do not isolate third derivatives alone.",
+  "pilot_seeds": [187000,187001],
+  "selection_seeds_reserved": [188000,188001,188002,188003],
+  "heldout_seeds_reserved": [189000,189001,189002,189003,189004,189005,189006,189007],
+  "primary_grid": {"methods":["cv1","cv2","ula"],"geometry":"full","coefficients":[0.05,0.1,0.2],"h_rule":"h=c/L_P; symmetric anchor H inverse with frozen 1e-10 ridge, full L_P effectively 1; actual values saved","replicas":64,"batch":32,"checkpoints":[128,512,2048]},
+  "focused_controls": "identity SGLD/CV1/CV2 c=.05; fixed-diagonal CV1/CV2 c=.1 retaining full CV2 correction; Li-SGLD alpha=.9 c=.01 and alpha=.99 c=.04; Li-CV1/CV2 alpha=.99 c=.01. No full factorial expansion.",
+  "li": "raw minibatch mean likelihood gradient, excludes prior and CV correction; v0=0; v=alpha v+(1-alpha)raw^2; D=1/(1e-5+sqrt(v)); drift and noise both scaled; adaptive correction omitted, empirical baseline only. Initial h calibration uses fixed pilot minibatch and first-update D curvature; no heldout calibration.",
+  "sampling": "Each independent replica starts at common mode. Independent replica/iteration/purpose JAX streams. Uniform without-replacement batches via Floyd exact-subset algorithm, validated before pilot seeds.",
+  "failure": "Permanent nonfinite or standardized radius>100 sqrt(d); any failed replica invalidates complete ensemble accuracy after failure. No successful-replica-only estimates.",
+  "reference": "Two independent full-data Metropolis HMC pools; four chains each; 256 warmup +1024 retained; anchor whitening; eight leapfrog steps, jitter and warmup-only adaptation; max Rhat<1.01, min bulk/tail ESS>=400, acceptance>.5, no energy divergences; pair max mean-MCSE z<4, relative covariance difference<.2. Failure gates all posterior accuracy rankings.",
+  "accuracy": "Pilot replica SW2 in fixed symmetric sqrt(anchor posterior Hessian) coordinates, 128 frozen projections, 64 endpoints vs256 reference draws; two references, independent reference floor. Ergodic functional variance NRMSE. No absolute SW2 certification or frontier conclusion until independent bootstrap audit is reviewed and final P2 protocol frozen.",
+  "gradient_MSE": "24 common posterior locations, 32 paired minibatches each, n32, SGLD/CV1/CV2; arithmetic mean and median raw squared error plus whitened error. Reference quality flag retained.",
+  "cost": "Primary wall-clock only, setup-inclusive; anchor + actual cache/metric/state setup + sampling; cold compile and compiled-code reuse views separately. Functionals, scoring, validation and reference work separate research costs. No FLOPs extension.",
+  "budgets": {"stage_seconds":7200,"per_target_seconds":1200,"per_reference_seconds":600,"per_run_sampler_seconds":120},
+  "selection_rule": "Report every candidate and failure. Eligibility requires reliable references and feasible setup/step time. Consider reproducible CV1-ULA gap, CV2 gradient MSE improvement and time tradeoff jointly; do not select solely largest gap. Final main-target selection and numeric grids get separate freeze before selection/heldout runs.",
+  "bank_source": "https://archive.ics.uci.edu/static/public/222/bank%2Bmarketing.zip; bank-full.csv, all45211 rows; continuous standardized; categorical reference levels dropped; intercept; duration included; labels yes=1. Dataset and transformed-data SHA256 recorded before sampler evaluation.",
+  "bootstrap_audit": "Separate Gaussian equal-distribution finite-cloud diagnostic: R128/reference256,d10,32 projections,24 trials,199 bootstrap replicates,512 independent clouds for conditional mean estimate. Reports shift and empirical interval inclusion; no P1 rewrite and no data-driven P2 CI replacement.",
+  "drive_destination": "MyDrive/CV2_Research/P2_Screening_2026-10-15",
+  "next_gate": "Review screening and SW2 audit, freeze actual target/LP/h/reference/thresholds and selection budget; final heldout not authorized by this pilot runner."
+}

@@ -1,0 +1,217 @@
+{
+  "stage": "P3A independent selection freeze v1",
+  "pilot_informed": true,
+  "pilot_summary_sha256": "df16dc92f8dd294ad6c475e8f88d5a4ce907b020fcd5f980649bedf8a9b48422",
+  "pilot_archive_sha256": "5466770c6ba5d30e794c9fc8e910c410ddc9e794660a46330b52162fce4b744a",
+  "candidates": [
+    {
+      "method": "cv1",
+      "batch": 1,
+      "h": 0.00625,
+      "pilot_objectives": [
+        "sw2",
+        "variance_nrmse"
+      ]
+    },
+    {
+      "method": "cv1",
+      "batch": 4,
+      "h": 0.00625,
+      "pilot_objectives": [
+        "sw2",
+        "variance_nrmse"
+      ]
+    },
+    {
+      "method": "cv1",
+      "batch": 16,
+      "h": 0.00625,
+      "pilot_objectives": [
+        "sw2",
+        "variance_nrmse"
+      ]
+    },
+    {
+      "method": "cv1",
+      "batch": 32,
+      "h": 0.00625,
+      "pilot_objectives": [
+        "sw2",
+        "variance_nrmse"
+      ]
+    },
+    {
+      "method": "cv1",
+      "batch": 64,
+      "h": 0.00625,
+      "pilot_objectives": [
+        "sw2"
+      ]
+    },
+    {
+      "method": "cv1",
+      "batch": 64,
+      "h": 0.0125,
+      "pilot_objectives": [
+        "variance_nrmse"
+      ]
+    },
+    {
+      "method": "cv1",
+      "batch": 256,
+      "h": 0.025,
+      "pilot_objectives": [
+        "sw2"
+      ]
+    },
+    {
+      "method": "cv1",
+      "batch": 256,
+      "h": 0.05,
+      "pilot_objectives": [
+        "variance_nrmse"
+      ]
+    },
+    {
+      "method": "cv2",
+      "batch": 1,
+      "h": 0.025,
+      "pilot_objectives": [
+        "sw2"
+      ]
+    },
+    {
+      "method": "cv2",
+      "batch": 1,
+      "h": 0.00625,
+      "pilot_objectives": [
+        "variance_nrmse"
+      ]
+    },
+    {
+      "method": "cv2",
+      "batch": 4,
+      "h": 0.05,
+      "pilot_objectives": [
+        "sw2"
+      ]
+    },
+    {
+      "method": "cv2",
+      "batch": 4,
+      "h": 0.00625,
+      "pilot_objectives": [
+        "variance_nrmse"
+      ]
+    },
+    {
+      "method": "cv2",
+      "batch": 16,
+      "h": 0.1,
+      "pilot_objectives": [
+        "sw2"
+      ]
+    },
+    {
+      "method": "cv2",
+      "batch": 16,
+      "h": 0.0125,
+      "pilot_objectives": [
+        "variance_nrmse"
+      ]
+    },
+    {
+      "method": "cv2",
+      "batch": 32,
+      "h": 0.1,
+      "pilot_objectives": [
+        "sw2"
+      ]
+    },
+    {
+      "method": "cv2",
+      "batch": 32,
+      "h": 0.05,
+      "pilot_objectives": [
+        "variance_nrmse"
+      ]
+    },
+    {
+      "method": "cv2",
+      "batch": 64,
+      "h": 0.1,
+      "pilot_objectives": [
+        "sw2"
+      ]
+    },
+    {
+      "method": "cv2",
+      "batch": 64,
+      "h": 0.05,
+      "pilot_objectives": [
+        "variance_nrmse"
+      ]
+    },
+    {
+      "method": "cv2",
+      "batch": 256,
+      "h": 0.1,
+      "pilot_objectives": [
+        "sw2"
+      ]
+    },
+    {
+      "method": "cv2",
+      "batch": 256,
+      "h": 0.05,
+      "pilot_objectives": [
+        "variance_nrmse"
+      ]
+    },
+    {
+      "method": "ula",
+      "batch": 32,
+      "h": 0.1,
+      "pilot_objectives": [
+        "sw2",
+        "variance_nrmse"
+      ]
+    }
+  ],
+  "selection_seeds": [
+    202700,
+    202701,
+    202702,
+    202703
+  ],
+  "replicas": 128,
+  "checkpoints": [
+    128,
+    512,
+    2048
+  ],
+  "runs": 84,
+  "stage_seconds": 2700,
+  "per_run_sampler_seconds": 180,
+  "shortlist_rule": "Per method/batch, union of stable-all-pilot-seeds minimum worst-reference seed-mean SW2 and minimum variance NRMSE at K2048; deterministic warm-time then h tie-break. No new step sizes or batches.",
+  "selection_rule": "Per method/batch, use configurations with no failed/censored seed through K2048; minimize max(SW2/minimum SW2, variance_NRMSE/minimum variance_NRMSE), with both metrics worst across reference-specific seed means at K2048; warm-time then h tie-break. No new search if none eligible.",
+  "heldout_seeds_reserved": [
+    202800,
+    202801,
+    202802,
+    202803,
+    202804,
+    202805,
+    202806,
+    202807
+  ],
+  "heldout_consumed": false,
+  "initialization_seed": 202506,
+  "schedule_seed": 202507,
+  "failure": "Unchanged pilot permanent nonfinite/radius rule. All failures retained; no survivor scoring. Any failed/censored seed excludes that configuration from selection.",
+  "cost": "Same T4 float64 setup-inclusive cold/warm definition as pilot; synchronized sampling; compile attributed once per independent run for cold; actual first-shape compile cache effects reported, not independent cold process timings.",
+  "reference": "Unchanged frozen Bank assets, both reference clouds; passed original gate",
+  "metrics": "Same standardized replica SW2 and relative variance NRMSE of per-replica ergodic variance estimates; no thresholds changed",
+  "scope": "Selection only. Batch-cost frontier and accuracy statements remain preliminary until independent held-out. Weak/unstable batch1 and batch4 retained for diagnosis, not dropped.",
+  "runner_sha256": "207ed9c54c0019456cee96bf042d8b9549fb1a1f11a9d0761e6b9578c982add1"
+}

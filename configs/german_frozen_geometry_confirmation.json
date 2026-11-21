@@ -1,0 +1,53 @@
+{
+  "purpose": "german_frozen_geometry_confirmation",
+  "problem_source": "results/german_sliced_pilot",
+  "scoring_calibration": "results/german_sliced_pilot/accuracy_calibration.npz",
+  "reference_source": "results/german_confirmation_reference",
+  "calibration_sources": [
+    "results/german_targeted_calibration/REFERENCE_RESOLUTION.md",
+    "results/german_targeted_calibration/GEOMETRY_PAIRS.md",
+    "results/german_targeted_calibration/REPLICA_RESOLUTION.md",
+    "results/german_targeted_calibration/CV1_SMALLER_H.md",
+    "results/german_targeted_calibration/CV1_CHAIN_EXTENSION.md"
+  ],
+  "inspected_sampler_seeds": [100, 101, 110, 111, 400, 401, 402, 403, 404, 405],
+  "method_seeds": [600, 601, 602, 603, 604, 605, 606, 607],
+  "batch_size": 32,
+  "replicas_per_seed": 512,
+  "reference_size": 1024,
+  "steps": 4096,
+  "checkpoints": [0, 1024, 2048, 4096],
+  "arms": {
+    "identity_cv1": {"method": "cv1", "geometry": "identity", "step_size": 0.001057669410995475},
+    "identity_cv2": {"method": "cv2", "geometry": "identity", "step_size": 0.001057669410995475},
+    "full_cv1_h03": {"method": "cv1", "geometry": "full_hessian", "step_size": 0.3},
+    "full_cv2_h03": {"method": "cv2", "geometry": "full_hessian", "step_size": 0.3},
+    "full_cv1_h01": {"method": "cv1", "geometry": "full_hessian", "step_size": 0.1}
+  },
+  "primary_contrasts": [
+    ["full_cv2_h03", "full_cv1_h03"],
+    ["full_cv2_h03", "full_cv1_h01"]
+  ],
+  "secondary_contrasts": [["identity_cv2", "identity_cv1"]],
+  "scoring": "saved pilot standardized sliced W2 with 512 frozen projections; standardized mean and covariance error against fresh independent validated full-data HMC",
+  "moment_threshold_each": 0.1,
+  "chain_diagnostics": {
+    "seeds": [1600, 1601],
+    "chains": 4,
+    "initialization": "independent 2x mode-Hessian Gaussian dispersion",
+    "identity": {"warmup": 10000, "draws": 20000},
+    "full_h03": {"warmup": 1000, "draws": 4000},
+    "full_cv1_h01": {"warmup": 1000, "draws": 12000},
+    "gate": {"max_rhat_exclusive": 1.01, "min_bulk_ess": 400, "min_tail_ess": 400}
+  },
+  "interpretation_rules": [
+    "Compare shared geometry and batch at matched h=0.3 to isolate the CV order mechanism.",
+    "Compare CV2 h=0.3 with CV1 h=0.1 for a method-specific step-size cost check, without calling it a matched-h mechanism contrast.",
+    "Report failure to mix at the fixed cap; do not extend based on intermediate outcomes.",
+    "The identity and full-Hessian arms use different h scales and their contrast is a calibrated-regime geometry comparison, not a same-h controlled effect.",
+    "HMC-to-HMC SW2 is a resolution indicator, not a lower bound; do not assert K_needed.",
+    "Existing adaptive diagonal pCV1/pCV2 remain secondary historical diagnostics because their metrics evolve separately; they are not relabeled as shared-geometry controls."
+  ],
+  "cost_scope": "Fresh anchor, CV full gradient, CV2 Hessian, full-Hessian inverse/factorization when applicable, plus all 512-replica transitions; HMC scoring is external evaluation cost.",
+  "timing": "sequential one-BLAS-thread ensembles, setup charged once per collection"
+}

@@ -1,0 +1,15 @@
+\begin{table}[!htbp]
+\centering\small
+\caption{German Credit post-burn-in mixing diagnostics at fixed full-H $h=0.4$. Each displayed configuration passes all four selection-stage seeds; entries are medians across those seeds.}\label{tab:german_ess}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrr}
+\toprule
+Method & Min bulk ESS & ESS/s & ESS/obs. grad. \\
+\midrule
+CV1 & 3262.1 & 4596.9 & 0.004943 \\
+CV2 & 3303.6 & 4172.5 & 0.005005 \\
+ULA & 3304.9 & 3515.7 & 0.000165 \\
+\bottomrule
+\end{tabular}
+\par\smallskip{\footnotesize Each seed uses four chains, $1000$ discarded burn-in transitions and $4000$ retained draws per chain. CV1/CV2 use batch $32$; ULA uses all $1000$ observations. The numerator is the smallest coordinate bulk ESS within each seed. Ratios are formed per seed before taking medians. Seconds include setup and burn-in; gradient counts exclude Hessian work, which is included in measured time.}
+\end{table}

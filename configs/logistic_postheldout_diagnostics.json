@@ -1,0 +1,32 @@
+{
+  "purpose": "post_heldout_targeted_diagnostics",
+  "interpretation": "Exploratory response to CV1 R-hat and CV2 covariance findings; never overwrite the held-out fixed-K result.",
+  "source_heldout": "results/logistic_fixed8192_heldout",
+  "source_chain_validation": "results/logistic_fixed8192_chain_validation",
+  "source_selection": "results/logistic_step_validation/diagnostic_selection.json",
+  "source_pilot": "results/stage456_validation/synthetic_logistic",
+  "source_reference": "results/logistic_fixed8192_reference_heldout",
+  "seeds": [500, 501, 502, 503, 504, 505, 506, 507],
+  "replicas": 768,
+  "reference_size": 3072,
+  "cv1": {
+    "step_scale": 1.0,
+    "replica_checkpoints": [0, 2048, 4096, 8192, 16384, 32768],
+    "chain_seed": 2500,
+    "chains": 4,
+    "warmup": 10000,
+    "retained_prefixes": [60000, 120000, 240000]
+  },
+  "cv2": {
+    "step_scale": 0.5,
+    "replica_checkpoints": [0, 4096, 8192, 16384],
+    "chain_seed": 2500,
+    "chains": 4,
+    "warmup": 10000,
+    "draws_per_chain": 120000
+  },
+  "moment_threshold_each": 0.1,
+  "mixing_gate": {"max_rhat_exclusive": 1.01, "min_bulk_ess": 400, "min_tail_ess": 400},
+  "bootstrap": {"seed_resamples": 20000, "interval": 0.95},
+  "timing": "Sequential one-thread runs; method preparation included in sampler cost."
+}

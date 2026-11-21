@@ -1,0 +1,66 @@
+\begingroup
+\small\setlength{\tabcolsep}{4pt}
+\setlength{\LTcapwidth}{\textwidth}
+\makeatletter\def\fnum@table{\tablename~\thetable}\makeatother
+\begin{longtable}{lrrrrl}
+\caption{All configurations excluded from reliable ESS-throughput comparison. Pass counts retain every seed. Diagnostic columns give the worst rank-$\widehat R$ and smallest bulk/tail ESS across seeds and coordinates, rather than the medians in Table~\ref{tab:ess_eligible}. No efficiency ratios are assigned to these groups.}\label{tab:ess_excluded}\\
+\toprule
+Setting & Pass & Max $\widehat R$ & Min bulk & Min tail & Flag \\
+\midrule
+\endfirsthead
+\multicolumn{6}{l}{\textit{Table \thetable\ continued}} \\
+\toprule
+Setting & Pass & Max $\widehat R$ & Min bulk & Min tail & Flag \\
+\midrule
+\endhead
+\midrule\multicolumn{6}{r}{\textit{Continued on next page}}\\
+\endfoot
+\bottomrule
+\endlastfoot
+\multicolumn{6}{l}{\textit{German P1 selection diagnostics}} \\*
+CV1, $h=0.05$ & 0/4 & 1.0267 & 236.6 & 495.5 & M \\
+CV1, $h=0.1$ & 1/4 & 1.0131 & 595.5 & 1167.8 & M \\
+CV2, $h=0.1$ & 1/4 & 1.0123 & 578.3 & 1041.0 & M \\
+ULA, $h=0.1$ & 1/4 & 1.0123 & 585.7 & 1069.8 & M \\
+Identity SGLD, $c=0.05$ & 0/4 & 4.2817 & 4.3 & 10.8 & M \\
+Identity SGLD, $c=0.2$ & 0/4 & 2.8736 & 4.6 & 10.7 & M \\
+Li-CV1, $\alpha=0.99,c=0.256$ & 0/4 & 3.3316 & 4.4 & 10.8 & M+A \\
+Li-CV2, $\alpha=0.9,c=0.016$ & 0/4 & 4.3264 & 4.3 & 10.7 & M+A \\
+Li-SGLD, $\alpha=0.99,c=0.256$ & 0/4 & 2.6065 & 4.7 & 10.8 & M+A \\
+Li-SGLD, $\alpha=0.9,c=0.064$ & 0/4 & 3.7517 & 4.3 & 10.7 & M+A \\
+\multicolumn{6}{l}{\textit{Historical Year geometry}} \\*
+Identity CV1 & 0/8 & 4.3087 & 4.2 & 10.6 & M \\
+Identity CV2 & 0/8 & 4.3079 & 4.2 & 10.6 & M \\
+\multicolumn{6}{l}{\textit{Earlier German short-chain study}} \\*
+CV1 & 0/2 & 3.8456 & 4.4 & 11.0 & M \\
+CV2 & 0/2 & 3.8385 & 4.4 & 11.0 & M \\
+pCV1 & 0/2 & 4.0177 & 4.4 & 11.0 & M+A \\
+pCV1 (fixed diagonal) & 0/2 & 4.0048 & 4.4 & 11.2 & M \\
+pCV2 & 0/2 & 4.0399 & 4.4 & 11.0 & M+A \\
+pCV2 (fixed diagonal) & 0/2 & 4.0217 & 4.4 & 11.1 & M \\
+pSGLD & 0/2 & 3.9895 & 4.4 & 11.0 & M+A \\
+pSGLD (fixed diagonal) & 0/2 & 3.9717 & 4.4 & 10.7 & M \\
+SGLD & 0/2 & 3.8377 & 4.4 & 11.0 & M \\
+\multicolumn{6}{l}{\textit{Earlier high-dimensional synthetic short chains}} \\*
+CV1 & 0/1 & 2.9948 & 5.6 & 13.7 & M \\
+CV2 & 0/1 & 2.1885 & 6.3 & 14.5 & M \\
+pCV1 & 0/1 & 2.3639 & 6.1 & 13.7 & M+A \\
+pCV1 (fixed diagonal) & 0/1 & 2.2687 & 6.3 & 14.6 & M \\
+pCV2 & 0/1 & 2.3484 & 6.1 & 13.7 & M+A \\
+pCV2 (fixed diagonal) & 0/1 & 2.1623 & 6.4 & 14.5 & M \\
+pSGLD & 0/1 & 3.5223 & 5.4 & 13.7 & M+A \\
+pSGLD (fixed diagonal) & 0/1 & 2.9053 & 5.7 & 13.7 & M \\
+SGLD & 0/1 & 2.9972 & 5.6 & 13.5 & M \\
+\multicolumn{6}{l}{\textit{Earlier low-dimensional synthetic short chains}} \\*
+CV1 & 0/2 & 1.6144 & 6.8 & 25.1 & M \\
+CV2 & 0/2 & 1.6141 & 6.9 & 25.1 & M \\
+pCV1 & 0/2 & 2.1672 & 5.3 & 23.6 & M+A \\
+pCV1 (fixed diagonal) & 0/2 & 1.6414 & 6.8 & 23.4 & M \\
+pCV2 & 0/2 & 2.1626 & 5.3 & 23.7 & M+A \\
+pCV2 (fixed diagonal) & 0/2 & 1.6340 & 6.8 & 24.0 & M \\
+pSGLD & 0/2 & 2.1957 & 5.2 & 15.5 & M+A \\
+pSGLD (fixed diagonal) & 0/2 & 1.5748 & 7.1 & 19.7 & M \\
+SGLD & 0/2 & 1.5534 & 7.2 & 20.3 & M \\
+\end{longtable}
+\endgroup
+\noindent\footnotesize M: at least one seed fails a numerical mixing gate. A: the metric also adapts throughout sampling, so conventional stationary-chain ESS is exploratory. The adaptive rows describe the tested initialization, accumulator and correction-omission choices only; they do not establish inferiority or general instability of Li et al. (2016). Adaptive metrics are outside the primary geometry-controlled comparison. The fixed-diagonal historical arms are distinct from the principal fixed full-H framework. For German identity and Li rows, $c$ is the original planning coefficient; it is not substituted for the public step $h$. No failed or nonmixing seed is removed to make a setting eligible.\normalsize

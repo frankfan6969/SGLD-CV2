@@ -1,0 +1,540 @@
+{
+  "name": "P3A bounded implementation and gradient-noise mechanism diagnostic v1",
+  "status": "frozen before diagnostic computation; exploratory after P3A validation",
+  "backend": "JAX CPU float64 plus independent NumPy/SciPy float64",
+  "batch_sizes": [
+    1,
+    4,
+    16,
+    32,
+    64,
+    256
+  ],
+  "locations": [
+    {
+      "group": "anchor"
+    },
+    {
+      "group": "reference",
+      "reference": "first",
+      "index": 0
+    },
+    {
+      "group": "reference",
+      "reference": "first",
+      "index": 32
+    },
+    {
+      "group": "reference",
+      "reference": "first",
+      "index": 64
+    },
+    {
+      "group": "reference",
+      "reference": "first",
+      "index": 96
+    },
+    {
+      "group": "reference",
+      "reference": "first",
+      "index": 128
+    },
+    {
+      "group": "reference",
+      "reference": "first",
+      "index": 160
+    },
+    {
+      "group": "reference",
+      "reference": "first",
+      "index": 192
+    },
+    {
+      "group": "reference",
+      "reference": "first",
+      "index": 224
+    },
+    {
+      "group": "reference",
+      "reference": "second",
+      "index": 0
+    },
+    {
+      "group": "reference",
+      "reference": "second",
+      "index": 32
+    },
+    {
+      "group": "reference",
+      "reference": "second",
+      "index": 64
+    },
+    {
+      "group": "reference",
+      "reference": "second",
+      "index": 96
+    },
+    {
+      "group": "reference",
+      "reference": "second",
+      "index": 128
+    },
+    {
+      "group": "reference",
+      "reference": "second",
+      "index": 160
+    },
+    {
+      "group": "reference",
+      "reference": "second",
+      "index": 192
+    },
+    {
+      "group": "reference",
+      "reference": "second",
+      "index": 224
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n32_h0.003125_seed203800_K128.npz",
+      "lane": 0,
+      "method": "cv1",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n32_h0.003125_seed203800_K128.npz",
+      "lane": 127,
+      "method": "cv1",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n32_h0.003125_seed203800_K128.npz",
+      "lane": 255,
+      "method": "cv1",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n32_h0.003125_seed203800_K128.npz",
+      "lane": 511,
+      "method": "cv1",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n32_h0.003125_seed203800_K8192.npz",
+      "lane": 0,
+      "method": "cv1",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n32_h0.003125_seed203800_K8192.npz",
+      "lane": 127,
+      "method": "cv1",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n32_h0.003125_seed203800_K8192.npz",
+      "lane": 255,
+      "method": "cv1",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n32_h0.003125_seed203800_K8192.npz",
+      "lane": 511,
+      "method": "cv1",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n256_h0.00625_seed203800_K128.npz",
+      "lane": 0,
+      "method": "cv1",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n256_h0.00625_seed203800_K128.npz",
+      "lane": 127,
+      "method": "cv1",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n256_h0.00625_seed203800_K128.npz",
+      "lane": 255,
+      "method": "cv1",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n256_h0.00625_seed203800_K128.npz",
+      "lane": 511,
+      "method": "cv1",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n256_h0.00625_seed203800_K8192.npz",
+      "lane": 0,
+      "method": "cv1",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n256_h0.00625_seed203800_K8192.npz",
+      "lane": 127,
+      "method": "cv1",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n256_h0.00625_seed203800_K8192.npz",
+      "lane": 255,
+      "method": "cv1",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv1_n256_h0.00625_seed203800_K8192.npz",
+      "lane": 511,
+      "method": "cv1",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n32_h0.003125_seed203800_K128.npz",
+      "lane": 0,
+      "method": "cv2",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n32_h0.003125_seed203800_K128.npz",
+      "lane": 127,
+      "method": "cv2",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n32_h0.003125_seed203800_K128.npz",
+      "lane": 255,
+      "method": "cv2",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n32_h0.003125_seed203800_K128.npz",
+      "lane": 511,
+      "method": "cv2",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n32_h0.003125_seed203800_K8192.npz",
+      "lane": 0,
+      "method": "cv2",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n32_h0.003125_seed203800_K8192.npz",
+      "lane": 127,
+      "method": "cv2",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n32_h0.003125_seed203800_K8192.npz",
+      "lane": 255,
+      "method": "cv2",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n32_h0.003125_seed203800_K8192.npz",
+      "lane": 511,
+      "method": "cv2",
+      "batch": 32,
+      "h": 0.003125,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n256_h0.00625_seed203800_K128.npz",
+      "lane": 0,
+      "method": "cv2",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n256_h0.00625_seed203800_K128.npz",
+      "lane": 127,
+      "method": "cv2",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n256_h0.00625_seed203800_K128.npz",
+      "lane": 255,
+      "method": "cv2",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n256_h0.00625_seed203800_K128.npz",
+      "lane": 511,
+      "method": "cv2",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 128
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n256_h0.00625_seed203800_K8192.npz",
+      "lane": 0,
+      "method": "cv2",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n256_h0.00625_seed203800_K8192.npz",
+      "lane": 127,
+      "method": "cv2",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n256_h0.00625_seed203800_K8192.npz",
+      "lane": 255,
+      "method": "cv2",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 8192
+    },
+    {
+      "group": "trajectory",
+      "file": "checkpoint_cv2_n256_h0.00625_seed203800_K8192.npz",
+      "lane": 511,
+      "method": "cv2",
+      "batch": 256,
+      "h": 0.00625,
+      "K": 8192
+    },
+    {
+      "group": "radial_stress",
+      "reference": "first",
+      "index": 0,
+      "scale": 2.0
+    },
+    {
+      "group": "radial_stress",
+      "reference": "first",
+      "index": 0,
+      "scale": 4.0
+    },
+    {
+      "group": "radial_stress",
+      "reference": "first",
+      "index": 64,
+      "scale": 2.0
+    },
+    {
+      "group": "radial_stress",
+      "reference": "first",
+      "index": 64,
+      "scale": 4.0
+    },
+    {
+      "group": "radial_stress",
+      "reference": "first",
+      "index": 128,
+      "scale": 2.0
+    },
+    {
+      "group": "radial_stress",
+      "reference": "first",
+      "index": 128,
+      "scale": 4.0
+    },
+    {
+      "group": "radial_stress",
+      "reference": "first",
+      "index": 192,
+      "scale": 2.0
+    },
+    {
+      "group": "radial_stress",
+      "reference": "first",
+      "index": 192,
+      "scale": 4.0
+    },
+    {
+      "group": "failure_previous_checkpoint",
+      "file": "checkpoint_cv2_n1_h0.003125_seed203804_K512.npz",
+      "lane": 34,
+      "batch": 1,
+      "h": 0.003125,
+      "seed": 203804,
+      "K": 512,
+      "failure_iteration": 836,
+      "scope": "Last stored checkpoint before first failure, not immediate pre-failure state"
+    },
+    {
+      "group": "failure_previous_checkpoint",
+      "file": "checkpoint_cv2_n1_h0.0046875_seed203804_K512.npz",
+      "lane": 34,
+      "batch": 1,
+      "h": 0.0046875,
+      "seed": 203804,
+      "K": 512,
+      "failure_iteration": 836,
+      "scope": "Last stored checkpoint before first failure, not immediate pre-failure state"
+    },
+    {
+      "group": "failure_previous_checkpoint",
+      "file": "checkpoint_cv2_n16_h0.00625_seed203801_K512.npz",
+      "lane": 103,
+      "batch": 16,
+      "h": 0.00625,
+      "seed": 203801,
+      "K": 512,
+      "failure_iteration": 1530,
+      "scope": "Last stored checkpoint before first failure, not immediate pre-failure state"
+    },
+    {
+      "group": "failure_previous_checkpoint",
+      "file": "checkpoint_cv2_n64_h0.0125_seed203800_K512.npz",
+      "lane": 269,
+      "batch": 64,
+      "h": 0.0125,
+      "seed": 203800,
+      "K": 512,
+      "failure_iteration": 1541,
+      "scope": "Last stored checkpoint before first failure, not immediate pre-failure state"
+    }
+  ],
+  "seed": 204100,
+  "monte_carlo": {
+    "locations": [
+      "reference:first:0",
+      "reference:second:0"
+    ],
+    "batch_sizes": [
+      4,
+      32
+    ],
+    "draws": 1024,
+    "paired": true
+  },
+  "exact_formula": "N*(N-n)/n * mean_i ||(r_i-mean(r)) L||^2 where P=L L^T; uniform without replacement",
+  "metrics": [
+    "raw gradient noise MSE",
+    "preconditioned gradient noise MSE",
+    "preconditioned exact gradient norm",
+    "whitened anchor distance",
+    "per-location CV2/CV1 ratio"
+  ],
+  "reporting": "Primary locations: independent references; trajectory and radial/failure locations descriptive. No algorithm ranking based only on its own trajectory. Anchor both zero. Fixed finite locations, not new posterior draws. No formal efficiency threshold changes.",
+  "audit": {
+    "methods": [
+      "cv1",
+      "cv2",
+      "ula"
+    ],
+    "step_sizes": [
+      0.003125,
+      0.00625
+    ],
+    "rtol": 1e-09,
+    "atol": 1e-08,
+    "noise": "Verify L L^T=P and identical fixed-normal update; no empirical covariance test needed",
+    "cost": "Reconstruct every checkpoint warm/cold from anchor+setup+sampling+compile; setup subcomponents aggregated in existing records, acknowledge historical anchor timing attribution"
+  },
+  "scope": "No new sampling grid, no P3B. Preconditioning ablation deferred pending diagnosis.",
+  "input_hashes": {
+    "gpu_replication/batched_sampler.py": "64ea7103d380eeb5a8758d5c915dee261f1ddbd0ea96e31449ad514560131edb",
+    "p2_screening/kernels.py": "1d7038f95cc4936f30f366f30372f48d867d4d69efc9db46cc7387d2cce603b5",
+    "src/sgld_cv/estimators.py": "8001a2a989dc241724a21357c7d2d36c9fa2f5262010e3fa522d0ff972d3bca3",
+    "src/sgld_cv/models.py": "2244a33465328d90c434dd0916c5b610e9cf36d00e00ca2c157e4b71ab0811f5",
+    "src/sgld_cv/preconditioners.py": "927bf6458214cd85d5bb586fd09e2eda77ca3fba81ea2a38ec1b2f226cf28d68",
+    "src/sgld_cv/samplers.py": "2971f65d211ab117b2a3da0637c66ad5fd4944d0a0d2d2477bdabb5c0a54ddda",
+    "p3a/jax_cpu_validation_v1/run.py": "b2edbd11aac4f3272044401dac139092e53d3bdbd36091daa9361e96649019d7",
+    "results/p3a_bank_t4_heldout_v1/frozen_bank_assets/target.npz": "7a32e3e9c40fc3314e91ce4e45365e4a85f43e525f3caeaf273dbcdfd4ba7d73",
+    "results/p3a_bank_t4_heldout_v1/frozen_bank_assets/scoring.npz": "b713582e702007e67f210459421e45ec0566c6b168fca57202e88efc8f693c5f",
+    "results/p3a_bank_jax_cpu_amendment1_validation_v1/summary.json": "c6ce6a675bc87e52c8640a49d0a759cff2b9efa08b57517985402f5bd9de9105",
+    "results/p3a_bank_jax_cpu_amendment1_validation_v1/checkpoint_cv1_n32_h0.003125_seed203800_K128.npz": "c308ca6fcb0f7ca5525dbb8da24b266fab9ddd13450c653d8ab417565cc01c7e",
+    "results/p3a_bank_jax_cpu_amendment1_validation_v1/checkpoint_cv1_n32_h0.003125_seed203800_K8192.npz": "147ac823ffcc11a449498f6b8b817d20ca6d5fc1ade3ce8327830bbd9546279a",
+    "results/p3a_bank_jax_cpu_amendment1_validation_v1/checkpoint_cv1_n256_h0.00625_seed203800_K128.npz": "3858604a66128061d9c3b874fe86941d11d6d15752fe4c7b05539096cc8b2421",
+    "results/p3a_bank_jax_cpu_amendment1_validation_v1/checkpoint_cv1_n256_h0.00625_seed203800_K8192.npz": "5424ea0ab64fec2bc67d38cf22882019d3bc7623d5c76962048822bc35170c24",
+    "results/p3a_bank_jax_cpu_amendment1_validation_v1/checkpoint_cv2_n32_h0.003125_seed203800_K128.npz": "da6a6098ac74129211b6e2d8db819fbee03291687d42e2f3aabc5c7fec4b4058",
+    "results/p3a_bank_jax_cpu_amendment1_validation_v1/checkpoint_cv2_n32_h0.003125_seed203800_K8192.npz": "403c50273bc1a69187940e4621738447d513b8e91514f674aff8f2c9a15f12fa",
+    "results/p3a_bank_jax_cpu_amendment1_validation_v1/checkpoint_cv2_n256_h0.00625_seed203800_K128.npz": "02671afc07426941a88c36113e82b7052c4e4c4bfc1f2b6d6d8e7ed6f21b290e",
+    "results/p3a_bank_jax_cpu_amendment1_validation_v1/checkpoint_cv2_n256_h0.00625_seed203800_K8192.npz": "a86807c375075356bfb097bc4602bd9b369819c8ff6d9a022ca473a7b2c1d035",
+    "results/p3a_bank_jax_cpu_amendment1_validation_v1/checkpoint_cv2_n1_h0.003125_seed203804_K512.npz": "f84dd4899ac42473172075e794053f69f3008675b3b5862787bfeb6fcfb25a27",
+    "results/p3a_bank_jax_cpu_amendment1_validation_v1/checkpoint_cv2_n1_h0.0046875_seed203804_K512.npz": "727c329f57205c54101b0974ed288401ef1e4c0cfe09db4632daee6e624bb71a",
+    "results/p3a_bank_jax_cpu_amendment1_validation_v1/checkpoint_cv2_n16_h0.00625_seed203801_K512.npz": "4153b69feb0ac63cbe936b1d1eee13e7b05a9181edc157e6994425c16fc0485c",
+    "results/p3a_bank_jax_cpu_amendment1_validation_v1/checkpoint_cv2_n64_h0.0125_seed203800_K512.npz": "e3da032d76888f5f2458f1ab24dddf16d189c0b071b14029d061f91e25f45b3d"
+  }
+}

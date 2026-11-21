@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "files": {
+    "gpu_replication/batched_sampler.py": "64ea7103d380eeb5a8758d5c915dee261f1ddbd0ea96e31449ad514560131edb",
+    "gpu_replication/validate_backend.py": "022d31e596872d30dbb17573ebf983cd48d0bf78e5db316712eb89e2a30e5fcc",
+    "gpu_replication/benchmark_backend.py": "ef480b422bde5683dd991535c8a1d4cad7b1b515807ee1565db46a5a2807cc11",
+    "gpu_replication/PROTOCOL.json": "5cd7e84a1b30293773f536630cb18d861da5dd83e2a3d2aebb377fdc5519cd11",
+    "gpu_replication/german_target.npz": "6d53ec50d75e4268ec9cd83a09144298a972d964e936ea107997058553c577ac",
+    "scripts/p1_bounded_sampler.py": "56837a847c4c8ff5620961878099f1b8df7158e78a0fb2343df9297cf38a1ac0",
+    "src/sgld_cv/models.py": "2244a33465328d90c434dd0916c5b610e9cf36d00e00ca2c157e4b71ab0811f5",
+    "src/sgld_cv/functionals.py": "673c160cb4feaceaa5d4291934c247fcd8f268f2e056d87d5276fc74925f424c",
+    "src/sgld_cv/references.py": "955de6a4f45d168ba68c58da48045000ba83b657ce2af439675d9b64cc15f578",
+    "src/sgld_cv/transport.py": "80eac51d92fb4cebabfd7101a22b6a7e4a53ec25c1ac5944cf45d786584deb08",
+    "src/sgld_cv/preconditioners.py": "927bf6458214cd85d5bb586fd09e2eda77ca3fba81ea2a38ec1b2f226cf28d68",
+    "src/sgld_cv/diagnostics.py": "6cb74d2aa12200a5b70c9fa5de4d657ea25eb2e0dd28cf331b5812e8549b87a9",
+    "src/sgld_cv/randomness.py": "7bd228e503eff9ec94a2fd5a5f1441d9b35c9cc410bf249411d6efb81837f330",
+    "src/sgld_cv/protocol.py": "6f83e9f246f1d6292329ce5cc5467df36aacdb1f6a6ee95037dfe4d6c3fd02bd",
+    "src/sgld_cv/horizon.py": "1ff4fcc6436e426a9ca3a3955b63f688b920d5cf2f0933121bb75a4261d937aa",
+    "src/sgld_cv/__init__.py": "36a75e4820f5dad45ce3fd261bb22519216c33de0b091dc00e40ddb87cb36b9f",
+    "src/sgld_cv/uncertainty.py": "e94ef959000af3954213e506c1cc8ab6b8c9619deed658c2fc747db888b5ae7a",
+    "src/sgld_cv/anchors.py": "39f3db29948ee3ab536d49220923bf964418246cb88d66601ac72e2e735583d4",
+    "src/sgld_cv/costs.py": "2101598286deaa32464f74d9bd968b446230e61a16dc5a43ae39d3c88c6633ad",
+    "src/sgld_cv/workflow.py": "aca530a5ec1a88ef922c34e383032c11b7d00a1b16776c97315add840d5d25f7",
+    "src/sgld_cv/estimators.py": "8001a2a989dc241724a21357c7d2d36c9fa2f5262010e3fa522d0ff972d3bca3",
+    "src/sgld_cv/gaussian.py": "3a02d904232f0245716d955ad6d4ec0725a2a865d505b3097ffece8a097a5558",
+    "src/sgld_cv/samplers.py": "2971f65d211ab117b2a3da0637c66ad5fd4944d0a0d2d2477bdabb5c0a54ddda",
+    "src/sgld_cv/data.py": "fbccab35b0879fc0deaa0c1bbc69cf48801047657c1f8e376d7724010a39b293"
+  }
+}

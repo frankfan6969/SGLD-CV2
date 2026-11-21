@@ -1,0 +1,23 @@
+{
+  "purpose": "heldout_fixed_horizon_comparison",
+  "interpretation": "Compare six frozen methods at K=8192; this does not assert K_needed=8192.",
+  "problem_source": "results/stage456_validation/synthetic_logistic",
+  "selection_source": "results/logistic_step_validation/diagnostic_selection.json",
+  "reference_source": "results/logistic_fixed8192_reference_heldout",
+  "reference_seeds": [9300, 9301],
+  "method_seeds": [500, 501, 502, 503, 504, 505, 506, 507],
+  "inspected_method_seeds": [100, 122, 123, 124, 125, 126, 127, 300, 301],
+  "methods": ["sgld", "cv1", "cv2", "psgld", "pcv1", "pcv2"],
+  "steps": 8192,
+  "checkpoints": [0, 2048, 4096, 8192],
+  "replicas_per_seed": 768,
+  "reference_size": 3072,
+  "accuracy_metric": "exact_empirical_w2",
+  "moment_geometry": "saved_pilot_hessian",
+  "guarded_moment_threshold_each": 0.1,
+  "primary_contrasts": [["cv2", "cv1"], ["pcv2", "pcv1"]],
+  "secondary_contrasts": [["pcv1", "cv1"], ["pcv2", "cv2"], ["sgld", "psgld"]],
+  "contrast_interval": "95% paired bootstrap over eight method seeds, conditional on the fixed HMC pool",
+  "timing": "sequential runs with one BLAS thread; setup-inclusive ensemble seconds",
+  "adaptive_ess_policy": "RMSprop-chain ESS is exploratory"
+}

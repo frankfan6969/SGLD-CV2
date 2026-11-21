@@ -1,0 +1,105 @@
+{
+  "status": "complete",
+  "runs": 144,
+  "replicas": 128,
+  "selection_seeds": [
+    188000,
+    188001,
+    188002,
+    188003
+  ],
+  "iterations": 2048,
+  "failed_replicas": 0,
+  "elapsed_seconds": 159.65388594200022,
+  "drive_files": 306,
+  "drive_errors": 0,
+  "archive_runtime_drive_sha256_match": true,
+  "heldout_consumed": false,
+  "selected_arms": [
+    {
+      "target": "synthetic_correlated_signal1",
+      "method": "cv1",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_correlated_signal1",
+      "method": "cv2",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_correlated_signal1",
+      "method": "ula",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 30000
+    },
+    {
+      "target": "synthetic_scaled_signal1",
+      "method": "cv1",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_scaled_signal1",
+      "method": "cv2",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_scaled_signal1",
+      "method": "ula",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 30000
+    },
+    {
+      "target": "synthetic_correlated_signal3",
+      "method": "cv1",
+      "h": 0.05,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_correlated_signal3",
+      "method": "cv2",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_correlated_signal3",
+      "method": "ula",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 30000
+    },
+    {
+      "target": "synthetic_benign_signal1",
+      "method": "cv1",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_benign_signal1",
+      "method": "cv2",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 32
+    },
+    {
+      "target": "synthetic_benign_signal1",
+      "method": "ula",
+      "h": 0.1,
+      "geometry": "full",
+      "batch_size": 30000
+    }
+  ],
+  "provenance": "selected h values and completion/backup fields verified from A100 output; full-precision selection statistics remain in Drive SELECTED_CONFIGURATIONS.json"
+}

@@ -1,0 +1,84 @@
+{
+  "stage": "P3A amendment1 CPU tuning freeze v1",
+  "post_heldout_exploratory": true,
+  "reason": "User authorizes additional smaller step-size tuning after inspecting original heldout; original results retained. CPU tuning first, possible V100 validation later.",
+  "backend": "Local NumPy CPU float64, batched replicas, BLAS threads1; no MPS or CUDA",
+  "batches": [
+    1,
+    4,
+    16,
+    32,
+    64,
+    256
+  ],
+  "steps": [
+    0.0015625,
+    0.003125,
+    0.0046875,
+    0.00625,
+    0.009375,
+    0.0125
+  ],
+  "methods": [
+    "cv1",
+    "cv2"
+  ],
+  "pilot_seeds": [
+    203600,
+    203601
+  ],
+  "validation_seeds_reserved": [
+    203800,
+    203801,
+    203802,
+    203803,
+    203804,
+    203805,
+    203806,
+    203807
+  ],
+  "replicas": 128,
+  "checkpoints": [
+    128,
+    512,
+    2048,
+    8192
+  ],
+  "main_max_iterations": 8192,
+  "ula_steps": [
+    0.0015625,
+    0.00625,
+    0.0125
+  ],
+  "ula_max_iterations": 2048,
+  "runs": 150,
+  "stage_seconds": 10800,
+  "per_run_sampler_seconds": 240,
+  "schedule_seed": 203599,
+  "initialization": "Every replica independently starts at the unchanged Bank mode",
+  "reference": "Passed frozen Bank reference and scoring assets unchanged; both clouds evaluated",
+  "step_convention": "theta_next=theta-h P g +sqrt(2h)L normal; P=full-H inverse with original1e-10 prior-scaled metric ridge; actual LP recorded",
+  "failure": "Original nonfinite or whitened radius>100sqrt(d), permanent dead lanes. Any failed replica invalidates ensemble. Any failed/censored pilot seed through full horizon excludes entire h configuration from formal tuning frontier; all failures retained.",
+  "rng": "NumPy SeedSequence([seed,replica,purpose,chunk_index]); 128-step chunks; purpose1 batches, purpose2 normals. Uniform without-replacement choice per replica/iteration. Identical inputs for CV1/CV2 at equal n,seed; Gaussian streams independent of n,h. Does not claim identical JAX sequences.",
+  "cost": "CPU-only warm total: original stored anchor-time attribution + locally measured full-H/cache/setup + CPU RNG generation + sampler computation. Full-H all methods constructs Hessian once; CV2 reuses it. Functional/scoring/checkpoint/archive excluded from primary timing but recorded. Legacy anchor timing is attribution, not newly measured CPU optimization. No CPU/V100/T4 absolute-time efficiency comparison.",
+  "shortlist": "At most3 distinct h per method/batch from stable Pareto points in (CPU warm cost,SW2,varianceNRMSE). Priority fastest joint SW2<=.3 and variance<=.5 if any; then lowest max(SW2/.3,variance/.5), lowest varianceNRMSE, lowest SW2; fill remaining slots by Pareto support count then h. Report unstable/no-candidate batch honestly. Never tune until success.",
+  "thresholds": [
+    0.5,
+    0.4,
+    0.3,
+    0.2
+  ],
+  "validation": "Not launched by this pilot. Freeze selected candidates and independent validation budgets before reserved seeds. V100 performance must be benchmarked separately; CPU optimal cost is not GPU optimal cost.",
+  "scope": "Full common small-step grid for CV1/CV2, longer horizons to distinguish slow movement (hK recorded). Limited matched-h ULA controls only through K2048; no full matched-h ULA decomposition at K8192. Original SGLD diagnostic retained. P3B remains deferred.",
+  "resume": "Explicit --resume uses deterministic chunk streams and saved theta/live/failure/functionals; cumulative stage cap not reset. Infrastructure-interrupted timing marked separately and ineligible for formal efficiency claims. No new/replacement seeds.",
+  "input_hashes": {
+    "results/p3a_bank_t4_heldout_v1/frozen_bank_assets/scoring.npz": "b713582e702007e67f210459421e45ec0566c6b168fca57202e88efc8f693c5f",
+    "results/p3a_bank_t4_heldout_v1/frozen_bank_assets/target_geometry.json": "4d186338bee3a6869dd1199396997d48993edc0168ec6ac5baf7d30fc6cbac6c",
+    "results/p3a_bank_t4_heldout_v1/frozen_bank_assets/target.npz": "7a32e3e9c40fc3314e91ce4e45365e4a85f43e525f3caeaf273dbcdfd4ba7d73",
+    "results/p3a_bank_t4_heldout_v1/frozen_bank_assets/reference_pair.json": "2a19dff6050efc32c7572d991f823372014c57770fa6712159cdfa3bd022cce8",
+    "results/p3a_bank_t4_heldout_v1/summary.json": "fb64fea38f58195ac4ba8edb821840b99d7ce52e3bbb893a4ee2575818782826"
+  },
+  "preflight_sha256": "6965fca8c8485e56d005d5633f6a525129166e5aa4a3a019a9a0fcad92e5e671",
+  "backend_sha256": "38c55f5ac95f722a70af493ec63f2e0136e053d6261484e461c0cd7e9e99fa47",
+  "runner_sha256": "390b082344ce1efdcf418a51d847a12f7e545dd49ac9a5d9143f9cfac81ea339"
+}

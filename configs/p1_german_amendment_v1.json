@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "stage": "amendment",
+  "parent_config": "configs/p1_german_frozen_v2.json",
+  "output": "results/p1_german_amendment_v1",
+  "execution_lock": "results/p1_german_amendment_configuration_v1/execution.lock.json",
+  "timing_order_seed": 143700,
+  "unchanged": "target, prior, metric, caches, public h convention, reference pools, projections, functionals, failure rule, Li v0=0/epsilon unchanged",
+  "heldout_authorized": false,
+  "candidates": [
+    {
+      "id": "psgld_a0.99_c0.256",
+      "arm": "psgld",
+      "method": "sgld",
+      "geometry": "li2016",
+      "coefficient": 0.256,
+      "h": 1.3203191532898161e-05,
+      "legacy_step_size": 2.6406383065796322e-05,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "psgld_a0.99_c0.512",
+      "arm": "psgld",
+      "method": "sgld",
+      "geometry": "li2016",
+      "coefficient": 0.512,
+      "h": 2.6406383065796322e-05,
+      "legacy_step_size": 5.2812766131592644e-05,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv1_a0.99_c0.256",
+      "arm": "pcv1",
+      "method": "cv1",
+      "geometry": "li2016",
+      "coefficient": 0.256,
+      "h": 1.3203191532898161e-05,
+      "legacy_step_size": 2.6406383065796322e-05,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    },
+    {
+      "id": "pcv1_a0.99_c0.512",
+      "arm": "pcv1",
+      "method": "cv1",
+      "geometry": "li2016",
+      "coefficient": 0.512,
+      "h": 2.6406383065796322e-05,
+      "legacy_step_size": 5.2812766131592644e-05,
+      "batch_size": 32,
+      "alpha": 0.99,
+      "epsilon": 1e-05
+    }
+  ],
+  "seeds": [
+    142102,
+    142103
+  ],
+  "budget": {
+    "replicas": 64,
+    "iteration_checkpoints": [
+      128,
+      512,
+      2048
+    ],
+    "maximum_candidate_seed_runs": 8,
+    "max_candidate_sampler_seconds": 120,
+    "max_stage_elapsed_seconds": 1800,
+    "execution": "one trajectory to max T per candidate/seed; reuse prefixes, do not rerun every T"
+  },
+  "rationale": "Both pilot seeds place best final variance-NRMSE at upper boundary for pSGLD/pCV1; one factor-two adjacent step per affected arm. Existing boundary rerun as paired control, not another new grid point.",
+  "amendment_number": 1,
+  "new_candidates": 2,
+  "paired_existing_controls": 2,
+  "selection_rule": "Keep original pilot points; add eligible new-step mean points from reserved seeds to frozen proxy-coverage shortlist. Reserved-seed old/new contrasts reported separately; no pooling across seed roles. No second amendment even if new boundary remains best."
+}

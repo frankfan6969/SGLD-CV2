@@ -1,0 +1,110 @@
+{
+  "stage": "P3A amendment1 JAX CPU tuning freeze v1",
+  "post_heldout_exploratory": true,
+  "reason": "User authorizes additional smaller step-size tuning after inspecting original heldout; original results retained. CPU tuning first, possible V100 validation later.",
+  "backend": "Local JAX CPU float64, unchanged CUDA kernels, JIT128-step chunks; JAX_PLATFORMS=cpu, x64 true",
+  "batches": [
+    1,
+    4,
+    16,
+    32,
+    64,
+    256
+  ],
+  "steps": [
+    0.0015625,
+    0.003125,
+    0.0046875,
+    0.00625,
+    0.009375,
+    0.0125
+  ],
+  "methods": [
+    "cv1",
+    "cv2"
+  ],
+  "pilot_seeds": [
+    203600,
+    203601
+  ],
+  "validation_seeds_reserved": [
+    203800,
+    203801,
+    203802,
+    203803,
+    203804,
+    203805,
+    203806,
+    203807
+  ],
+  "replicas": 128,
+  "checkpoints": [
+    128,
+    512,
+    2048,
+    8192
+  ],
+  "main_max_iterations": 8192,
+  "ula_steps": [
+    0.0015625,
+    0.00625,
+    0.0125
+  ],
+  "ula_max_iterations": 2048,
+  "runs": 150,
+  "stage_seconds": 7200,
+  "per_run_sampler_seconds": 240,
+  "schedule_seed": 203599,
+  "initialization": "Every replica independently starts at the unchanged Bank mode",
+  "reference": "Passed frozen Bank reference and scoring assets unchanged; both clouds evaluated",
+  "step_convention": "theta_next=theta-h P g +sqrt(2h)L normal; P=full-H inverse with original1e-10 prior-scaled metric ridge; actual LP recorded",
+  "failure": "Original nonfinite or whitened radius>100sqrt(d), permanent dead lanes. Any failed replica invalidates ensemble. Any failed/censored pilot seed through full horizon excludes entire h configuration from formal tuning frontier; all failures retained.",
+  "rng": "Unchanged kernels.py fold_in(seed,replica,iteration,purpose) streams and Floyd uniform without-replacement minibatches. Paired CV1/CV2 inputs at equal batch/seed. No NumPy RNG in sampling; version recorded, no cross-version bitwise claim.",
+  "cost": "CPU-only setup-inclusive warm time: original stored anchor-time attribution + locally measured base.prepare/setup + synchronized compiled sampler. Cold adds measured shape-specific JIT compile time. CPU RNG is inside the timed JAX kernel. Functional/scoring/checkpoint/archive and unscored128-step initialization excluded and recorded separately. Original anchor cost is attributed, not newly optimized locally. No absolute CPU/V100/T4 efficiency comparison.",
+  "shortlist": "At most3 distinct h per method/batch from stable Pareto points in (CPU warm cost,SW2,varianceNRMSE). Priority fastest joint SW2<=.3 and variance<=.5 if any; then lowest max(SW2/.3,variance/.5), lowest varianceNRMSE, lowest SW2; fill remaining slots by Pareto support count then h. Report unstable/no-candidate batch honestly. Never tune until success.",
+  "thresholds": [
+    0.5,
+    0.4,
+    0.3,
+    0.2
+  ],
+  "validation": "Not launched by this pilot. Freeze selected candidates and independent validation budgets before reserved seeds. V100 performance must be benchmarked separately; CPU optimal cost is not GPU optimal cost.",
+  "scope": "Full common small-step grid for CV1/CV2, longer horizons to distinguish slow movement (hK recorded). Limited matched-h ULA controls only through K2048; no full matched-h ULA decomposition at K8192. Original SGLD diagnostic retained. P3B remains deferred.",
+  "resume": "Explicit --resume uses deterministic chunk streams and saved theta/live/failure/functionals; cumulative stage cap not reset. Infrastructure-interrupted timing marked separately and ineligible for formal efficiency claims. No new/replacement seeds.",
+  "input_hashes": {
+    "results/p3a_bank_t4_heldout_v1/frozen_bank_assets/scoring.npz": "b713582e702007e67f210459421e45ec0566c6b168fca57202e88efc8f693c5f",
+    "results/p3a_bank_t4_heldout_v1/frozen_bank_assets/target_geometry.json": "4d186338bee3a6869dd1199396997d48993edc0168ec6ac5baf7d30fc6cbac6c",
+    "results/p3a_bank_t4_heldout_v1/frozen_bank_assets/target.npz": "7a32e3e9c40fc3314e91ce4e45365e4a85f43e525f3caeaf273dbcdfd4ba7d73",
+    "results/p3a_bank_t4_heldout_v1/frozen_bank_assets/reference_pair.json": "2a19dff6050efc32c7572d991f823372014c57770fa6712159cdfa3bd022cce8",
+    "results/p3a_bank_t4_heldout_v1/summary.json": "fb64fea38f58195ac4ba8edb821840b99d7ce52e3bbb893a4ee2575818782826",
+    "p2_screening/run.py": "01d43fbb86881fab4b7dc0e3417a9a69c92981148577666d6b334027bf9b2506",
+    "p2_screening/validate.py": "de098ae1853519aea324492fb7218760faa87d89123cdb9bf74c0ab03dc6a911",
+    "p2_screening/kernels.py": "1d7038f95cc4936f30f366f30372f48d867d4d69efc9db46cc7387d2cce603b5",
+    "p2_screening/backup_worker.py": "6d9257b0a9760af2e5ef9b9289c948312fa988634f24e398c843767796e2dba6",
+    "p2_screening/PROTOCOL.json": "30294e368dd4d30b74c6c026baad2836168035763b8e137935d35f56c3efed6e",
+    "p2_screening/README.md": "2f5c8f31afc5126484491f8d90aa902d484c0b3bff8d854abb5888d1dd20c234",
+    "gpu_replication/batched_sampler.py": "64ea7103d380eeb5a8758d5c915dee261f1ddbd0ea96e31449ad514560131edb",
+    "src/sgld_cv/models.py": "2244a33465328d90c434dd0916c5b610e9cf36d00e00ca2c157e4b71ab0811f5",
+    "src/sgld_cv/functionals.py": "673c160cb4feaceaa5d4291934c247fcd8f268f2e056d87d5276fc74925f424c",
+    "src/sgld_cv/references.py": "955de6a4f45d168ba68c58da48045000ba83b657ce2af439675d9b64cc15f578",
+    "src/sgld_cv/transport.py": "80eac51d92fb4cebabfd7101a22b6a7e4a53ec25c1ac5944cf45d786584deb08",
+    "src/sgld_cv/preconditioners.py": "927bf6458214cd85d5bb586fd09e2eda77ca3fba81ea2a38ec1b2f226cf28d68",
+    "src/sgld_cv/diagnostics.py": "6cb74d2aa12200a5b70c9fa5de4d657ea25eb2e0dd28cf331b5812e8549b87a9",
+    "src/sgld_cv/randomness.py": "7bd228e503eff9ec94a2fd5a5f1441d9b35c9cc410bf249411d6efb81837f330",
+    "src/sgld_cv/protocol.py": "6f83e9f246f1d6292329ce5cc5467df36aacdb1f6a6ee95037dfe4d6c3fd02bd",
+    "src/sgld_cv/horizon.py": "1ff4fcc6436e426a9ca3a3955b63f688b920d5cf2f0933121bb75a4261d937aa",
+    "src/sgld_cv/__init__.py": "36a75e4820f5dad45ce3fd261bb22519216c33de0b091dc00e40ddb87cb36b9f",
+    "src/sgld_cv/uncertainty.py": "e94ef959000af3954213e506c1cc8ab6b8c9619deed658c2fc747db888b5ae7a",
+    "src/sgld_cv/anchors.py": "39f3db29948ee3ab536d49220923bf964418246cb88d66601ac72e2e735583d4",
+    "src/sgld_cv/costs.py": "2101598286deaa32464f74d9bd968b446230e61a16dc5a43ae39d3c88c6633ad",
+    "src/sgld_cv/workflow.py": "aca530a5ec1a88ef922c34e383032c11b7d00a1b16776c97315add840d5d25f7",
+    "src/sgld_cv/estimators.py": "8001a2a989dc241724a21357c7d2d36c9fa2f5262010e3fa522d0ff972d3bca3",
+    "src/sgld_cv/gaussian.py": "3a02d904232f0245716d955ad6d4ec0725a2a865d505b3097ffece8a097a5558",
+    "src/sgld_cv/samplers.py": "2971f65d211ab117b2a3da0637c66ad5fd4944d0a0d2d2477bdabb5c0a54ddda",
+    "src/sgld_cv/data.py": "fbccab35b0879fc0deaa0c1bbc69cf48801047657c1f8e376d7724010a39b293"
+  },
+  "preflight_sha256": "09e9bdc1e8d0a637e717d89ce040505389caa1a56442302127183bf779baf08b",
+  "runner_sha256": "ab960ffb54a26c7380462eaaf4224edaa896cef80e57571d07eba95f5ba5e4d0",
+  "initialization_seed": 203598,
+  "jax_version": "0.6.2"
+}

@@ -1,0 +1,17 @@
+{
+  "label": "Gaussian dimension and conditioning pilot, tune before publication",
+  "dimensions": [2, 20, 100],
+  "kappas": [10, 100, 1000],
+  "N": 1024,
+  "batch_size": 64,
+  "step_fraction": 0.2,
+  "steps": 1000,
+  "replicas": 128,
+  "reference_size": 128,
+  "baseline_repeats": 3,
+  "checkpoint_count": 20,
+  "seeds": [300, 301, 302],
+  "dataset_seed": 221,
+  "methods": ["sgld", "cv1", "cv2", "ula"]
+}
+

@@ -1,0 +1,93 @@
+{
+  "source_summary_sha256": "c9948eee87e0b37980f1e23a1264fce0f7fcd3b7fefefaedd58659034b9ec564",
+  "rule": "Within each original full-H method at K2048, zero failures; minimize worst ratio of 4 accuracy means to own-method componentwise minima; tie warm/cold/h. Operational ranking frozen before heldout.",
+  "methods": {
+    "cv1": {
+      "candidates": [
+        {
+          "h": 0.05,
+          "accuracy_means": [
+            0.4880640093815609,
+            1.4738103822553956,
+            0.4823808931797264,
+            1.36349587762653
+          ],
+          "warm": 1.2222524880025958,
+          "cold": 2.76725271900159,
+          "worst_ratio": 1.0
+        },
+        {
+          "h": 0.1,
+          "accuracy_means": [
+            1.323082028866678,
+            4.310261219176857,
+            1.32040747868938,
+            3.9803539357580924
+          ],
+          "warm": 1.1985703184936938,
+          "cold": 2.743570549492688,
+          "worst_ratio": 2.9245697215002617
+        },
+        {
+          "h": 0.2,
+          "accuracy_means": [
+            4.057359036505199,
+            16.42965337603095,
+            4.055352402049916,
+            15.267774333868228
+          ],
+          "warm": 1.1889573710004697,
+          "cold": 2.733957601999464,
+          "worst_ratio": 11.19752144791608
+        }
+      ],
+      "selected_h": 0.05
+    },
+    "ula": {
+      "candidates": [
+        {
+          "h": 0.05,
+          "accuracy_means": [
+            0.23965908224163995,
+            0.16293777795348205,
+            0.23330026583915148,
+            0.1611742198323138
+          ],
+          "warm": 0.7849704535001365,
+          "cold": 3.6073227605011198,
+          "worst_ratio": 1.1917430657742396
+        },
+        {
+          "h": 0.1,
+          "accuracy_means": [
+            0.24029823669198974,
+            0.13672223706007156,
+            0.23407156837719129,
+            0.13683802841208176
+          ],
+          "warm": 0.8935411189995648,
+          "cold": 3.715893426000548,
+          "worst_ratio": 1.003306050832242
+        },
+        {
+          "h": 0.2,
+          "accuracy_means": [
+            0.25174645626018666,
+            0.15002630313067192,
+            0.24517653224230337,
+            0.15284094021752925
+          ],
+          "warm": 0.7857022419975692,
+          "cold": 3.6080545489985525,
+          "worst_ratio": 1.1169478396550367
+        }
+      ],
+      "selected_h": 0.1
+    },
+    "cv2": {
+      "selected_h": 0.00625,
+      "source_decision_sha256": "0d035f0616cb38fe253f7f539ab4912b32e777414231632c30c3e508f7414d4e",
+      "basis": "Bounded extension candidate passed fresh pilot seeds 187010-187013"
+    }
+  }
+}

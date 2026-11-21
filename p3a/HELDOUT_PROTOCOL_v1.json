@@ -1,0 +1,416 @@
+{
+  "stage": "P3A Bank T4 independent held-out freeze v1",
+  "selection_informed": true,
+  "selection_summary_sha256": "70c3ac0352cf07683ac74e9baba7df6ef3c883ea7743fdaf61361871359ffdec",
+  "selected_configurations_sha256": "cd04a26e204c1c12d4cb97e4302e806ad8e615fe317ce58fdc59f181e10fa87b",
+  "pilot_summary_sha256": "df16dc92f8dd294ad6c475e8f88d5a4ce907b020fcd5f980649bedf8a9b48422",
+  "candidates": [
+    {
+      "method": "cv1",
+      "batch": 1,
+      "h": 0.00625
+    },
+    {
+      "method": "cv1",
+      "batch": 4,
+      "h": 0.00625
+    },
+    {
+      "method": "cv1",
+      "batch": 16,
+      "h": 0.00625
+    },
+    {
+      "method": "cv1",
+      "batch": 32,
+      "h": 0.00625
+    },
+    {
+      "method": "cv1",
+      "batch": 64,
+      "h": 0.0125
+    },
+    {
+      "method": "cv1",
+      "batch": 256,
+      "h": 0.025
+    },
+    {
+      "method": "cv2",
+      "batch": 1,
+      "h": 0.00625
+    },
+    {
+      "method": "cv2",
+      "batch": 4,
+      "h": 0.00625
+    },
+    {
+      "method": "cv2",
+      "batch": 16,
+      "h": 0.0125
+    },
+    {
+      "method": "cv2",
+      "batch": 64,
+      "h": 0.05
+    },
+    {
+      "method": "cv2",
+      "batch": 256,
+      "h": 0.05
+    },
+    {
+      "method": "ula",
+      "batch": 32,
+      "h": 0.1
+    }
+  ],
+  "not_selected": [
+    {
+      "method": "cv2",
+      "batch": 32,
+      "status": "no_eligible_configuration"
+    }
+  ],
+  "heldout_seeds": [
+    202800,
+    202801,
+    202802,
+    202803,
+    202804,
+    202805,
+    202806,
+    202807
+  ],
+  "replicas": 512,
+  "checkpoints": [
+    128,
+    512,
+    2048
+  ],
+  "runs": 96,
+  "stage_seconds": 1500,
+  "per_run_sampler_seconds": 120,
+  "initialization_seed": 202810,
+  "schedule_seed": 202811,
+  "selection_seeds": [
+    202700,
+    202701,
+    202702,
+    202703
+  ],
+  "pilot_seeds": [
+    202600,
+    202601
+  ],
+  "precision": "T4 JAX float64; unchanged validated kernels, uniform minibatches without replacement; mode start for every independent replica",
+  "failure": "Unchanged permanent nonfinite or whitened radius>100sqrt(d). Any failed lane invalidates ensemble; no survivor-only metrics. Any failed or budget-censored seed excludes complete configuration from formal frontier/time-to-target. Retain all failures and checkpoint states. No grid extension or replacement seed.",
+  "metrics": "Unchanged standardized replica SW2 and relative variance NRMSE of ergodic variance estimators; both frozen reference clouds; no threshold changes",
+  "cost": "Same T4-only anchor-attributed plus actual setup plus synchronized sampler; cold adds actual measured compile. First-shape cache effects disclosed. Functional/scoring/backup costs recorded separately. No absolute time comparisons to A100 or to different replica budgets.",
+  "primary_fixed_choices": [
+    {
+      "mode": "variance_only",
+      "threshold": 0.5,
+      "method": "cv1",
+      "choice": {
+        "method": "cv1",
+        "batch": 32,
+        "h": 0.00625,
+        "iteration": 2048,
+        "selection_sw2": 0.21291369654829384,
+        "selection_variance_nrmse": 0.41674056984102054,
+        "selection_warm_seconds": 1.509452426748794
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "variance_only",
+      "threshold": 0.5,
+      "method": "cv2",
+      "choice": {
+        "method": "cv2",
+        "batch": 4,
+        "h": 0.00625,
+        "iteration": 2048,
+        "selection_sw2": 0.22636080126988023,
+        "selection_variance_nrmse": 0.4909801911378622,
+        "selection_warm_seconds": 1.079135272499002
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "variance_only",
+      "threshold": 0.5,
+      "method": "ula",
+      "choice": {
+        "method": "ula",
+        "batch": 32,
+        "h": 0.1,
+        "iteration": 128,
+        "selection_sw2": 0.20417315423378898,
+        "selection_variance_nrmse": 0.3645317412669225,
+        "selection_warm_seconds": 1.3093807839987903
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "variance_only",
+      "threshold": 0.4,
+      "method": "cv1",
+      "choice": {
+        "method": "cv1",
+        "batch": 256,
+        "h": 0.025,
+        "iteration": 512,
+        "selection_sw2": 0.19731234630449318,
+        "selection_variance_nrmse": 0.3807035300903995,
+        "selection_warm_seconds": 1.900309129498737
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "variance_only",
+      "threshold": 0.4,
+      "method": "cv2",
+      "choice": null,
+      "status": "not_reached_in_selection; no retrospective heldout choice"
+    },
+    {
+      "mode": "variance_only",
+      "threshold": 0.4,
+      "method": "ula",
+      "choice": {
+        "method": "ula",
+        "batch": 32,
+        "h": 0.1,
+        "iteration": 128,
+        "selection_sw2": 0.20417315423378898,
+        "selection_variance_nrmse": 0.3645317412669225,
+        "selection_warm_seconds": 1.3093807839987903
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "variance_only",
+      "threshold": 0.3,
+      "method": "cv1",
+      "choice": {
+        "method": "cv1",
+        "batch": 256,
+        "h": 0.025,
+        "iteration": 2048,
+        "selection_sw2": 0.19550610687168413,
+        "selection_variance_nrmse": 0.2292502570633584,
+        "selection_warm_seconds": 6.456172294998623
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "variance_only",
+      "threshold": 0.3,
+      "method": "cv2",
+      "choice": null,
+      "status": "not_reached_in_selection; no retrospective heldout choice"
+    },
+    {
+      "mode": "variance_only",
+      "threshold": 0.3,
+      "method": "ula",
+      "choice": {
+        "method": "ula",
+        "batch": 32,
+        "h": 0.1,
+        "iteration": 512,
+        "selection_sw2": 0.1983579322691358,
+        "selection_variance_nrmse": 0.2158804419992291,
+        "selection_warm_seconds": 4.103201055748514
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "variance_only",
+      "threshold": 0.2,
+      "method": "cv1",
+      "choice": null,
+      "status": "not_reached_in_selection; no retrospective heldout choice"
+    },
+    {
+      "mode": "variance_only",
+      "threshold": 0.2,
+      "method": "cv2",
+      "choice": null,
+      "status": "not_reached_in_selection; no retrospective heldout choice"
+    },
+    {
+      "mode": "variance_only",
+      "threshold": 0.2,
+      "method": "ula",
+      "choice": {
+        "method": "ula",
+        "batch": 32,
+        "h": 0.1,
+        "iteration": 2048,
+        "selection_sw2": 0.19331196788686864,
+        "selection_variance_nrmse": 0.13606380189709372,
+        "selection_warm_seconds": 15.375827788248216
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "joint",
+      "threshold": 0.5,
+      "method": "cv1",
+      "choice": {
+        "method": "cv1",
+        "batch": 32,
+        "h": 0.00625,
+        "iteration": 2048,
+        "selection_sw2": 0.21291369654829384,
+        "selection_variance_nrmse": 0.41674056984102054,
+        "selection_warm_seconds": 1.509452426748794
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "joint",
+      "threshold": 0.5,
+      "method": "cv2",
+      "choice": {
+        "method": "cv2",
+        "batch": 4,
+        "h": 0.00625,
+        "iteration": 2048,
+        "selection_sw2": 0.22636080126988023,
+        "selection_variance_nrmse": 0.4909801911378622,
+        "selection_warm_seconds": 1.079135272499002
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "joint",
+      "threshold": 0.5,
+      "method": "ula",
+      "choice": {
+        "method": "ula",
+        "batch": 32,
+        "h": 0.1,
+        "iteration": 128,
+        "selection_sw2": 0.20417315423378898,
+        "selection_variance_nrmse": 0.3645317412669225,
+        "selection_warm_seconds": 1.3093807839987903
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "joint",
+      "threshold": 0.4,
+      "method": "cv1",
+      "choice": {
+        "method": "cv1",
+        "batch": 256,
+        "h": 0.025,
+        "iteration": 512,
+        "selection_sw2": 0.19731234630449318,
+        "selection_variance_nrmse": 0.3807035300903995,
+        "selection_warm_seconds": 1.900309129498737
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "joint",
+      "threshold": 0.4,
+      "method": "cv2",
+      "choice": null,
+      "status": "not_reached_in_selection; no retrospective heldout choice"
+    },
+    {
+      "mode": "joint",
+      "threshold": 0.4,
+      "method": "ula",
+      "choice": {
+        "method": "ula",
+        "batch": 32,
+        "h": 0.1,
+        "iteration": 128,
+        "selection_sw2": 0.20417315423378898,
+        "selection_variance_nrmse": 0.3645317412669225,
+        "selection_warm_seconds": 1.3093807839987903
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "joint",
+      "threshold": 0.3,
+      "method": "cv1",
+      "choice": {
+        "method": "cv1",
+        "batch": 256,
+        "h": 0.025,
+        "iteration": 2048,
+        "selection_sw2": 0.19550610687168413,
+        "selection_variance_nrmse": 0.2292502570633584,
+        "selection_warm_seconds": 6.456172294998623
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "joint",
+      "threshold": 0.3,
+      "method": "cv2",
+      "choice": null,
+      "status": "not_reached_in_selection; no retrospective heldout choice"
+    },
+    {
+      "mode": "joint",
+      "threshold": 0.3,
+      "method": "ula",
+      "choice": {
+        "method": "ula",
+        "batch": 32,
+        "h": 0.1,
+        "iteration": 512,
+        "selection_sw2": 0.1983579322691358,
+        "selection_variance_nrmse": 0.2158804419992291,
+        "selection_warm_seconds": 4.103201055748514
+      },
+      "status": "frozen_choice"
+    },
+    {
+      "mode": "joint",
+      "threshold": 0.2,
+      "method": "cv1",
+      "choice": null,
+      "status": "not_reached_in_selection; no retrospective heldout choice"
+    },
+    {
+      "mode": "joint",
+      "threshold": 0.2,
+      "method": "cv2",
+      "choice": null,
+      "status": "not_reached_in_selection; no retrospective heldout choice"
+    },
+    {
+      "mode": "joint",
+      "threshold": 0.2,
+      "method": "ula",
+      "choice": {
+        "method": "ula",
+        "batch": 32,
+        "h": 0.1,
+        "iteration": 2048,
+        "selection_sw2": 0.19331196788686864,
+        "selection_variance_nrmse": 0.13606380189709372,
+        "selection_warm_seconds": 15.375827788248216
+      },
+      "status": "frozen_choice"
+    }
+  ],
+  "primary_comparison": "Selection-fixed configurations/checkpoints for each threshold; do not replace unsuccessful held-out choice by another held-out configuration. Primary warm-time comparison; cold separately. Paired seed bootstrap 10000 draws seed202812 for uncertainty. Both references must satisfy seed-mean accuracy, no failed/censored seed. Mark unmet or unavailable targets explicitly; no finite speedup if either method not reached.",
+  "secondary": "Complete held-out point cloud and descriptive batch-optimized Pareto frontier across fixed candidate/checkpoint grid; optimization on heldout explicitly exploratory, not globally optimal or unbiased speedup evidence.",
+  "controls": "ULA h0.1 is independently optimized full-gradient baseline. Matched-h gradient-noise gap remains a pilot diagnostic from the full original ULA grid, not a formal heldout matched-h comparison. Selected SGLD diagnostic preserved in original pilot.",
+  "scope": "Bank only; three frozen budgets through K2048, consistent with P3A pilot/selection. No K8192 extension. CV2 n32 has no eligible shortlisted configuration and remains an explicitly reported selection failure, not silently filled by retuning. Selection used R128; heldout uses R512 to improve endpoint-resolution and stability coverage.",
+  "reference": "Passed frozen Bank assets unchanged; no reference recalculation",
+  "next": "Report heldout outcome, failure rates and uncertainty; no new tuning after evaluation",
+  "runner_sha256": "eb6f825af99b3ed05c53d384a37b84092ca0c801af2d0db100449fe56aab5db2"
+}

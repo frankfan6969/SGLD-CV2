@@ -1,0 +1,50 @@
+% Integrated Appendix A.9--A.11; former standalone supplementary material.
+\subsection{Historical YearPredictionMSD geometry study}\label{app:year_geometry}
+This completed historical study is retained as a real-data geometry diagnostic, not as an additional main efficiency benchmark. We use the official $463{,}715$ training rows and $90$ features of YearPredictionMSD \citep{bertin2011year}, without feature standardization or an intercept, a $N(0,I)$ coefficient prior and fixed Gaussian observation variance $100$. The resulting posterior is Gaussian with analytically available sufficient statistics. Its precision condition number is $5.23\times10^6$. For these quadratic observation losses, CV2 coincides with the full gradient up to floating-point error: calibration checks give maximum relative discrepancy $1.10\times10^{-10}$. This does not test a nonquadratic Taylor approximation.
+
+\paragraph{Frozen settings and evaluation object.}
+Eight fresh paired seeds ($1000$--$1007$) each run four overdispersed chains, initialized at the declared posterior scale $2$, with $1000$ warmup transitions per chain. The historical implementation uses $\theta'=\theta-(s/2)P\widehat g+\sqrt{s}\,L\zeta$, so its saved step parameter $s$ corresponds to $h=s/2$ in~\eqref{eq:exp_update}. Identity CV1/CV2 use $s=2.2486761328\times10^{-12}$, batch $32$ and $4000$ retained draws per chain. Full-H CV1 uses $s=0.1$, batch $128$ and $20{,}000$ retained draws; full-H CV2 uses $s=0.3$ or $0.6$, batch $128$ and $4000$ retained draws. Parameters and budgets are frozen before these seeds. The full-H metric is the exact posterior covariance; it is held fixed.
+
+Historical SW$_2$ uses $512$ spaced retained draws ($128$ per chain) against $1024$ independent exact Gaussian draws, with frozen calibration whitening and $512$ fixed directions. This evaluates a time-correlated chain-sample distribution, not the mode-start iterate law. Table values are seed medians; moments use all retained draws. For the frozen transform $W_{\mathrm{cal}}$, the errors are
+\[
+ E_\mu=\frac{\|(\bar\theta-\mu)^\top W_{\mathrm{cal}}\|}{\sqrt d},\qquad
+ E_\Sigma=\frac{\|W_{\mathrm{cal}}^\top(\widehat\Sigma-\Sigma)W_{\mathrm{cal}}\|_F}{d}.
+\]
+Covariance uses the retained sample count as denominator. The normalization $E_\Sigma$ differs from P4's Frobenius error divided by $\sqrt d$ (Appendix~\ref{app:gaussian}).
+\input{tables/year_geometry}
+
+\paragraph{Geometry, mixing and discretization.}
+Both identity arms fail the historical mixing criterion in all eight seeds despite CV2's near-exact gradient. They are budget-censored controls, not validated posterior approximations. At the frozen identity step, the exact linear-Gaussian transition gives a slowest-mean-direction e-fold time of approximately $5.23\times10^7$ transitions; this is an analytic time scale, not an observed finite-run convergence time. All full-H arms pass the table's criterion. Thus this real-data quadratic example complements the controlled Gaussian ablation: eliminating stochastic-gradient noise does not remove a geometry bottleneck.
+
+Passing a mixing gate is not sufficient for accuracy. Increasing full-H CV2 from $s=0.3$ to $0.6$ improves its bulk ESS but increases median SW$_2$ from $0.1075$ to $0.1353$. Its seed-paired mean SW$_2$ difference is $+0.0263$ (approximate 95\% bootstrap interval $[0.0253,0.0276]$); the exact ULA stationary variance inflation is $8.1\%$ at $s=0.3$ versus $17.6\%$ at $s=0.6$. CV1's longer full-H run has slightly lower standardized mean error than CV2 at $s=0.3$ ($0.0234$ versus $0.0302$). The historical full-H CV2--CV1 SW$_2$ contrast is $-0.0131$ ($[-0.0165,-0.0100]$), but it compares different fixed steps and chain budgets, not an optimized matched-accuracy frontier. These conditional intervals use $20{,}000$ bootstrap resamples of only eight seed pairs, with fixed reference/scoring construction.
+
+\paragraph{Direct sampling and cost limitations.}
+The direct Gaussian control includes sufficient-statistic setup and $16{,}000$ independent draws ($512$ scored). Its median SW$_2$ is $0.0958$ and time approximately $0.13$ seconds. This finite-cloud comparison is not a zero-error floor or a bias correction to subtract. Direct sampling is substantially cheaper for this conjugate target; an MCMC preference is not implied.
+
+Historical CPU times include the sufficient-statistic anchor, CV caches, metric inverse/factorization and four-chain transitions, excluding loading/scoring. CV1 retains $80{,}000$ draws versus CV2's $16{,}000$: the time difference is not a same-budget or optimized time-to-accuracy comparison. These timings remain outside the A100/JAX CPU/P3 rankings. Original records are preserved; no new sampling or tuning is added.
+
+\clearpage
+\subsection{Post-burn-in ESS and computational cost}\label{app:ess_cost}
+\paragraph{Evaluation object and normalization.}
+This appendix uses existing chain records, separately from the endpoint and ergodic-functional accuracy studies. For seed $s$, let $E_s$ be the smallest coordinate bulk ESS in the original collection of $C$ unthinned chains, each with $T$ retained draws after discarding $B$ burn-in transitions. We compute $E_s/(CT)$, $E_s/[C(T+B)]$, $E_s/t_s$ and $E_s/G_s$, where $t_s$ and $G_s$ are the setup-inclusive seconds and counted observation-gradient calls for that same chain collection. Table summaries take medians of these per-seed quantities; they are not ratios of medians. Measured setup includes required anchor, cache and metric preparation, followed by burn-in and sampling. Reference construction, loading and scoring are excluded as declared in the original ledgers. Chain costs come from the diagnostic records, not from the adjacent replica-ensemble timing files.
+
+Hessian contributions and data-row visits remain separate operation units: ESS per observation-gradient call is not a complete computational-cost measure. All displayed German full-H settings record $18000$ observation-Hessian contributions, including mode/metric work; historical Year CV2 records an additional $463715$ likelihood-Hessian contributions, while Year CV1 has zero separately counted such contributions in its sufficient-statistic ledger. Their measured preparation costs remain included in seconds. No conversion to artificial gradient-equivalent counts is made.
+
+\paragraph{Eligible configurations and study boundaries.}
+German uses selection-stage seeds $242200$--$242203$, four chains, $B=1000$ and $T=4000$. Each configuration is eligible for descriptive throughput only if every seed passes maximum rank-$\widehat R<1.01$, minimum coordinate bulk and tail ESS at least $400$, with no recorded numerical failure and a fixed metric. The five eligible German settings and three eligible historical Year settings are all retained in Table~\ref{tab:ess_eligible}; this is not a selection of the best ESS/s rows. Section~\ref{sec:exp_ess} shows the common-$h=0.4$ German comparison, with batch $32$ for CV1/CV2 and full-data ULA.
+
+Year uses eight historical seeds and the unequal chain budgets in Section~\ref{app:year_geometry}. Its saved diagnostic and cost summaries permit normalization, but that runner did not save the raw retained chains. Those ESS values are therefore source-verified; German's and the earlier short-chain diagnostics were independently recomputed from saved unthinned chains. Year retains the historical step symbol $s=2h$. Neither study is merged with GPU or JAX frontier timings, and the table does not estimate a global optimized ranking or significant method differences.
+\input{tables/ess_eligible}
+\FloatBarrier
+
+\paragraph{Incomplete mixing and coverage.}
+Table~\ref{tab:ess_excluded} retains every one of the $39$ configuration groups excluded from reliable throughput comparison, including settings with only one passing seed, identity SGLD and the practical adaptive controls. An adaptive metric is an additional reason for interpreting conventional ESS cautiously; the flagged adaptive groups also fail the numerical mixing gates. Ratios for failed groups are not used for ranking, and no successful-seed subset is substituted. Earlier synthetic/German short-chain studies are labelled separately from the current P1 protocol.
+\input{tables/ess_excluded}
+
+The audit reconstructs $105$ saved chain collections and extracts $40$ historical Year diagnostic/cost collections. The principal P1--P3 endpoint and running-functional archives do not identify within-chain autocorrelation ESS. Accordingly, this supplements the original ESS-per-cost request without claiming a reliable baseline-complete nonquadratic comparison for every experiment. It cannot replace SW$_2$, variance NRMSE or the frozen time-to-accuracy evaluation.
+
+\FloatBarrier
+\subsection{Reproduction assets and audit trail}\label{app:reproduce}
+The reproducibility package contains frozen configurations, generated tables, full-precision numerical source mappings and figure provenance. Original datasets, HMC pools, per-run endpoints/functionals, failure records and full threshold analyses are retained in the research archive. The evidence registry links the experiment families to their detailed reports and numerical files. The compact manuscript package retains the selected source records; it does not substitute for the complete raw archives.
+
+Historical Gaussian/YearMSD checks remain supporting material rather than additional nonquadratic efficiency evidence. The experimental conclusions are limited by approximate fixed references, eight algorithm-seed clusters, finite candidate grids, one nested synthetic data realization and hardware-dependent timing.

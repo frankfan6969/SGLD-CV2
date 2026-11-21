@@ -1,0 +1,22 @@
+{
+  "configs": [
+    "d2_k10_common.json",
+    "d2_k10_tuned.json",
+    "d2_k100_common.json",
+    "d2_k100_tuned.json",
+    "d2_k1000_common.json",
+    "d2_k1000_tuned.json",
+    "d20_k10_common.json",
+    "d20_k10_tuned.json",
+    "d20_k100_common.json",
+    "d20_k100_tuned.json",
+    "d20_k1000_common.json",
+    "d20_k1000_tuned.json",
+    "d100_k10_common.json",
+    "d100_k10_tuned.json",
+    "d100_k100_common.json",
+    "d100_k100_tuned.json",
+    "d100_k1000_common.json",
+    "d100_k1000_tuned.json"
+  ]
+}

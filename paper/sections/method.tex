@@ -1,0 +1,81 @@
+\section{Method}
+\label{sec:method}
+
+\subsection{Setup and Baker's SLGD-CV}
+We work with a posterior $\pi(\theta)\propto e^{-U(\theta)}$ on $\mathbb R^d$ whose negative log-density decomposes as
+\begin{equation}
+  U(\theta) \;=\; U_0(\theta) \;+\; \sum_{i=1}^N U_i(\theta),
+  \label{eq:decomp}
+\end{equation}
+with $U_0$ the prior's contribution and each $U_i$ the contribution of data point $i$. SGLD takes steps
+\begin{equation}
+  \theta_{k+1} \;=\; \theta_k \;-\; h\,\nabla\tilde U(\theta_k) \;+\; \sqrt{2h}\,\zeta_{k+1}, \qquad \zeta_{k+1}\sim\mathcal N(0,I_d),
+  \label{eq:sgld}
+\end{equation}
+where $h>0$ is the step size, $\zeta_{k+1}$ is an injected standard-Gaussian noise independent of $\theta_k$ and of all past randomness, and $\nabla\tilde U(\theta_k)$ is a stochastic estimate of $\nabla U(\theta_k)$. Throughout, $S_k=(i_1,\dots,i_n)$ denotes the mini-batch at step $k$: an ordered tuple of indices drawn i.i.d.\ uniformly on $\{1,\dots,N\}$ with replacement. For any oracle $\nabla\tilde U$ we write $\xi_k:=\nabla\tilde U(\theta_k)-\nabla U(\theta_k)$ for the \emph{oracle noise}, and for any two probability measures $\mu,\nu$ on $\mathbb R^d$ with finite second moments, $W_2(\mu,\nu)$ denotes the 2-Wasserstein distance.
+
+
+\textbf{Baker's SGLD-CV.} Fix an \emph{anchor} $\hat\theta\in\mathbb R^d$, typically the output of SGD or L-BFGS run on $U$, so $\hat\theta$ approximates the posterior mode $\theta^\star:=\arg\min_\theta U(\theta)$. Baker's estimator precomputes the full-data anchor gradient $\nabla U_{\text{data}}(\hat\theta):=\sum_{i=1}^N\nabla U_i(\hat\theta)$ and at each step returns
+\begin{equation}
+  \nabla\tilde U_{\mathrm B}(\theta_k) \;=\; \nabla U_0(\theta_k) \;+\; \nabla U_{\text{data}}(\hat\theta) \;+\; \frac{N}{n}\sum_{j=1}^n\bigl[\nabla U_{i_j}(\theta_k) - \nabla U_{i_j}(\hat\theta)\bigr].
+  \label{eq:baker}
+\end{equation}
+A datum-by-datum conditional expectation confirms $\mathbb E[\nabla\tilde U_{\mathrm B}(\theta_k)\mid\theta_k]=\nabla U(\theta_k)$, so~\eqref{eq:baker} is unbiased. Under per-datum Lipschitz gradients with constants $L_i$, the oracle-noise variance of Baker's estimator scales \emph{quadratically} with distance from the anchor:
+\begin{equation}
+  \mathbb E\bigl[\|\xi_k^{\mathrm B}\|^2\mid\theta_k\bigr] \;\le\; \frac{M_L^2}{n}\,\|\theta_k-\hat\theta\|^2, \qquad M_L^2:=N^2\bar L^2,\ \bar L^2:=\tfrac{1}{N}\sum_{i=1}^N L_i^2
+  \label{eq:baker-var}
+\end{equation}
+When \(\theta_k\) is far from \(\hat\theta\), which happens on ill-conditioned posteriors whose bulk mass does not concentrate at the anchor, then the right-hand side grows, and the variance reduction degrades.
+
+\subsection{The SGLD-CV2 Estimator}
+
+We replace Baker's zeroth-order anchor $\nabla U_i(\hat\theta)$ with a \emph{first-order Taylor expansion} of each per-datum gradient around $\hat\theta$. Define the second-order control variate for the data terms by
+\begin{equation}
+  C_k \;=\; \frac{N}{n}\sum_{j=1}^n\!\bigl[\nabla U_{i_j}(\hat\theta) + \nabla^2 U_{i_j}(\hat\theta)(\theta_k-\hat\theta)\bigr],
+\end{equation}
+whose conditional expectation is
+\begin{equation}
+  \mathbb E[C_k\mid\theta_k] \;=\; \nabla U_{\text{data}}(\hat\theta) \;+\; \nabla^2 U_{\text{data}}(\hat\theta)(\theta_k-\hat\theta),
+\end{equation}
+where $\nabla^2 U_{\text{data}}(\hat\theta):=\sum_{i=1}^N\nabla^2 U_i(\hat\theta)$ is the summed full-data Hessian at the anchor. Applying the control-variate formula $(N/n)\sum_j\nabla U_{i_j}(\theta_k)-C_k+\mathbb E[C_k\mid\theta_k]$ to the data terms and adding back the exact prior gradient gives the SGLD-CV2 oracle:
+\begin{equation}
+  \boxed{\;\nabla\tilde U_{\mathrm{CV2}}(\theta_k) \;=\; \nabla U_0(\theta_k) \;+\; \nabla U_{\text{data}}(\hat\theta) \;+\; \nabla^2 U_{\text{data}}(\hat\theta)(\theta_k-\hat\theta) \;+\; \frac{N}{n}\sum_{j=1}^n r_{i_j}(\theta_k),\;}
+  \label{eq:cv2}
+\end{equation}
+where the \emph{per-datum Taylor remainder} is
+\begin{equation}
+  r_i(\theta) \;:=\; \nabla U_i(\theta) - \nabla U_i(\hat\theta) - \nabla^2 U_i(\hat\theta)(\theta-\hat\theta).
+  \label{eq:remainder}
+\end{equation}
+
+The estimator~\eqref{eq:cv2} has three pieces. The prior gradient $\nabla U_0(\theta_k)$ is evaluated exactly at every step and contributes no variance. The deterministic second-order Taylor term $\nabla U_{\text{data}}(\hat\theta)+\nabla^2 U_{\text{data}}(\hat\theta)(\theta_k-\hat\theta)$ is precomputed once (up to one $d\times d$ matrix--vector product per step) and contributes no variance. The stochastic remainder $(N/n)\sum_j r_{i_j}(\theta_k)$ is the sole source of variance.
+
+\textbf{Unbiasedness.} By construction, $\mathbb E[\nabla\tilde U_{\mathrm{CV2}}(\theta_k)\mid\theta_k]=\nabla U(\theta_k)$. Indeed, \[\mathbb E[(N/n)\sum_j\nabla U_{i_j}(\theta_k)\mid\theta_k]=\nabla U_{\text{data}}(\theta_k),\] and the Taylor-term cancellation in~\eqref{eq:cv2} completes the identity.
+
+\textbf{Reduction to Baker.} Setting $\nabla^2 U_i(\hat\theta)=0$ for all $i$ zeros out every Hessian term in~\eqref{eq:cv2} and recovers Baker's~\eqref{eq:baker}. In this sense SGLD-CV is the special case of SGLD-CV2 with the curvature correction dropped.
+
+\subsection{Algorithm}
+\label{sec:algorithm}
+
+
+Given the posterior decomposition~\eqref{eq:decomp} and a fixed step size $h>0$, SGLD-CV2 performs a one-off preprocessing step followed by samplingas per usual.
+
+\noindent\fbox{\parbox{0.98\linewidth}{%
+\textbf{SGLD-CV2.}
+
+\textbf{Preprocessing.}
+\begin{enumerate}\setlength\itemsep{2pt}\vspace{-4pt}
+  \item Run an optimizer (e.g. SGD) to obtain an anchor $\hat\theta$ approximating $\theta^\star$.
+  \item Cache per-datum anchor gradients $g_i:=\nabla U_i(\hat\theta)$ for $i=1,\dots,N$ and their sum $\nabla U_{\text{data}}(\hat\theta)=\sum_i g_i$.
+  \item Cache the summed full-data Hessian at the anchor, $H_{\text{data}}:=\nabla^2 U_{\text{data}}(\hat\theta)\in\mathbb R^{d\times d}$.
+\end{enumerate}
+
+\textbf{Sampling.} Initialize $\theta_0=\hat\theta$. For $k=0,1,2,\dots$:
+\begin{enumerate}\setlength\itemsep{2pt}\vspace{-4pt}
+  \setcounter{enumi}{3}
+  \item Draw mini-batch $S_k=(i_1,\dots,i_n)$. For each $j$, compute $\nabla U_{i_j}(\theta_k)$, look up $g_{i_j}$ from Step 2, and compute the per-datum Hessian-vector product $\nabla^2 U_{i_j}(\hat\theta)(\theta_k-\hat\theta)$ via \citet{pearlmutter1994}.
+  \item Form $\nabla\tilde U_{\mathrm{CV2}}(\theta_k)$ by~\eqref{eq:cv2} with $H_{\text{data}}(\theta_k-\hat\theta)$ in place of $\nabla^2 U_{\text{data}}(\hat\theta)(\theta_k-\hat\theta)$.
+  \item Update $\theta_{k+1}=\theta_k - h\,\nabla\tilde U_{\mathrm{CV2}}(\theta_k) + \sqrt{2h}\,\zeta_{k+1}$, $\zeta_{k+1}\sim\mathcal N(0,I_d)$.
+\end{enumerate}
+}}%
+

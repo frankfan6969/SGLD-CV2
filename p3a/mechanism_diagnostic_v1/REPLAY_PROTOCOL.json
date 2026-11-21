@@ -1,0 +1,31 @@
+{
+  "stage": "Bounded failure replay extension; fixed before replay",
+  "cases": [
+    {
+      "batch": 1,
+      "h": 0.003125,
+      "seed": 203804,
+      "first_failure": 836,
+      "lane": 34
+    },
+    {
+      "batch": 16,
+      "h": 0.00625,
+      "seed": 203801,
+      "first_failure": 1530,
+      "lane": 103
+    },
+    {
+      "batch": 64,
+      "h": 0.0125,
+      "seed": 203800,
+      "first_failure": 1541,
+      "lane": 269
+    }
+  ],
+  "replicas": 512,
+  "stream": "Original sample_kernel fold_in order, same full shape, exact matching checkpoint512 required",
+  "scope": "Three earliest failures from three distinct batch sizes. No retuning or new accuracy ranking.",
+  "source_sha256": "1d7038f95cc4936f30f366f30372f48d867d4d69efc9db46cc7387d2cce603b5",
+  "prior_protocol_sha256": "516f3482f7f7856781047b0e7b3df510d87eab99d75a326e43757bd645332d1c"
+}
